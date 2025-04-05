@@ -47,6 +47,10 @@ Se traduce el árbol semántico a código intermedio o de máquina.
 | Nombre          | Carné         | Rol          |
 |-----------------|---------------|--------------|
 | Brandon Manzo   | 0900-18-502 | Coordinado |
+| Josue ApénBal   | 0900-17-2948 |  |
+| Josue Camey   | 0900-19-4828 |  |
+| Alan Estrada   | 0900-22-18429 |  |
+| Alejandro Hernandez   | 0900-18-1082 |  |
 
 ## 🚀 Cómo Ejecutar el Proyecto
 
