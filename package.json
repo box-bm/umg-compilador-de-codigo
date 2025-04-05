@@ -1,0 +1,31 @@
+{
+  "name": "generadordecodigo",
+  "version": "1.0.0",
+  "description": "Proyecto final compiladores umg, lenguaje base para generar codigo en base a una sintaxis definida",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "npx eslint ./src/**",
+    "lint:fix": "npx eslint ./src/** --fix"
+  },
+  "keywords": [
+    "compilador"
+  ],
+  "author": "Brandon Manzo",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.24.0",
+    "@jest/globals": "^29.7.0",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.14.0",
+    "eslint": "^9.24.0",
+    "eslint-plugin-jest": "^28.11.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.3.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.29.0"
+  }
+}

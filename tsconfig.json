@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es2016", // Define la versión de JavaScript emitida.
+    "module": "ESNext", // Usa el sistema de módulos ES.
+    "moduleResolution": "node", // Resolución de módulos estilo Node.js.
+    "strict": true, // Habilita todas las reglas estrictas de TypeScript.
+    "esModuleInterop": true, // Interoperabilidad con módulos CommonJS.
+    "allowSyntheticDefaultImports": true, // Permite importar módulos sin exportación por defecto.
+    "forceConsistentCasingInFileNames": true, // Asegura consistencia en mayúsculas/minúsculas en los nombres de archivo.
+    "skipLibCheck": true // Omite la verificación de archivos .d.ts.
+  },
+  "include": ["src/**/*"], // Incluye todos los archivos en la carpeta src.
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "node_modules"] // Excluye pruebas y node_modules.
+}
