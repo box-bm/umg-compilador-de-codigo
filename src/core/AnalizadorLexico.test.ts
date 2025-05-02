@@ -1,10 +1,11 @@
 import AnalizadorLexico from "./AnalizadorLexico";
+import type Token from "../types/Token";
 
 describe("AnalizadorLexico", () => {
   it("should handle empty lines with spaces", () => {
     const line = "   ";
     const result = AnalizadorLexico(line);
-    expect(result).toEqual([]);
+    expect(result).toEqual([] as Token[]);
   });
 
   describe("Variable definitions", () => {
@@ -19,7 +20,7 @@ describe("AnalizadorLexico", () => {
         { type: "operator", value: "=", column: 15 },
         { type: "number", value: "10", column: 17 },
         { type: "semicolon", value: ";", column: 19 },
-      ]);
+      ] as Token[]);
     });
 
     it("should detect object declaration with braces", () => {
@@ -35,7 +36,7 @@ describe("AnalizadorLexico", () => {
         { type: "string", value: "'value'", column: 20 },
         { type: "brace", value: "}", column: 28 },
         { type: "semicolon", value: ";", column: 29 },
-      ]);
+      ] as Token[]);
     });
 
     it("should detect array declaration with brackets", () => {
@@ -55,7 +56,7 @@ describe("AnalizadorLexico", () => {
         { type: "number", value: "3", column: 28 },
         { type: "bracket", value: "]", column: 29 },
         { type: "semicolon", value: ";", column: 30 },
-      ]);
+      ] as Token[]);
     });
   });
 
@@ -63,13 +64,13 @@ describe("AnalizadorLexico", () => {
     it("should ignore single-line comments", () => {
       const line = "// This is a comment";
       const result = AnalizadorLexico(line);
-      expect(result).toEqual([]);
+      expect(result).toEqual([] as Token[]);
     });
 
     it("should ignore multi-line comments", () => {
       const line = "/* This is a multi-line comment */";
       const result = AnalizadorLexico(line);
-      expect(result).toEqual([]);
+      expect(result).toEqual([] as Token[]);
     });
 
     it("should ignore comments with code", () => {
@@ -81,7 +82,7 @@ describe("AnalizadorLexico", () => {
         { type: "operator", value: "=", column: 7 },
         { type: "number", value: "10", column: 9 },
         { type: "semicolon", value: ";", column: 11 },
-      ]);
+      ] as Token[]);
     });
 
     it("should ignore comment block with code", () => {
@@ -93,13 +94,13 @@ describe("AnalizadorLexico", () => {
         { type: "operator", value: "=", column: 7 },
         { type: "number", value: "10", column: 9 },
         { type: "semicolon", value: ";", column: 11 },
-      ]);
+      ] as Token[]);
     });
 
     it("Should ignore line in block comment starting with *", () => {
       const line = "* let x = 10;";
       const result = AnalizadorLexico(line);
-      expect(result).toEqual([]);
+      expect(result).toEqual([] as Token[]);
     });
   });
 
@@ -121,7 +122,7 @@ describe("AnalizadorLexico", () => {
         { type: "operator", value: "/", column: 25 },
         { type: "identifier", value: "e", column: 27 },
         { type: "semicolon", value: ";", column: 28 },
-      ]);
+      ] as Token[]);
     });
   });
 
@@ -138,7 +139,7 @@ describe("AnalizadorLexico", () => {
         { type: "operator", value: "!=", column: 11 },
         { type: "identifier", value: "d", column: 14 },
         { type: "semicolon", value: ";", column: 15 },
-      ]);
+      ] as Token[]);
     });
 
     it("Should detect logical operators more and less", () => {
@@ -153,7 +154,7 @@ describe("AnalizadorLexico", () => {
         { type: "operator", value: "<", column: 12 },
         { type: "identifier", value: "d", column: 14 },
         { type: "semicolon", value: ";", column: 15 },
-      ]);
+      ] as Token[]);
     });
 
     it("should detect logical operatos more and less with equal", () => {
@@ -168,7 +169,7 @@ describe("AnalizadorLexico", () => {
         { type: "operator", value: "<=", column: 13 },
         { type: "identifier", value: "d", column: 16 },
         { type: "semicolon", value: ";", column: 17 },
-      ]);
+      ] as Token[]);
     });
 
     it("Should detect and logical operator", () => {
@@ -179,7 +180,7 @@ describe("AnalizadorLexico", () => {
         { type: "operator", value: "&&", column: 3 },
         { type: "identifier", value: "b", column: 6 },
         { type: "semicolon", value: ";", column: 7 },
-      ]);
+      ] as Token[]);
     });
     it("Should detect or logical operator", () => {
       const line = "a || b;";
@@ -189,7 +190,7 @@ describe("AnalizadorLexico", () => {
         { type: "operator", value: "||", column: 3 },
         { type: "identifier", value: "b", column: 6 },
         { type: "semicolon", value: ";", column: 7 },
-      ]);
+      ] as Token[]);
     });
 
     it("should detect multiple logical operatos", () => {
@@ -202,7 +203,7 @@ describe("AnalizadorLexico", () => {
         { type: "operator", value: "||", column: 7 },
         { type: "identifier", value: "c", column: 10 },
         { type: "semicolon", value: ";", column: 11 },
-      ]);
+      ] as Token[]);
     });
 
     it("should detect logical operators with parentheses", () => {
@@ -216,7 +217,7 @@ describe("AnalizadorLexico", () => {
         { type: "bracket", value: ")", column: 8 },
         { type: "operator", value: "||", column: 10 },
         { type: "identifier", value: "c", column: 13 },
-      ]);
+      ] as Token[]);
     });
   });
 });
