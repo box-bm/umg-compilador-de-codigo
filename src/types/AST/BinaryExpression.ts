@@ -1,0 +1,27 @@
+import { ASTNode } from "./ASTNode";
+import Token from "../Token";
+
+/**
+ * Represents a binary expression in the AST.
+ */
+export interface BinaryExpression extends ASTNode {
+  /**
+   * The type of the AST node, always "binary_expression".
+   */
+  type: "binary_expression";
+
+  /**
+   * The operator used in the binary expression.
+   */
+  operator: string;
+
+  /**
+   * The left operand of the binary expression, which can be a token or another binary expression.
+   */
+  left: Token | BinaryExpression;
+
+  /**
+   * The right operand of the binary expression, which can be a token or another binary expression.
+   */
+  right: Token | BinaryExpression;
+}
