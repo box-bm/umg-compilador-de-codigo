@@ -1,4 +1,5 @@
 import { ASTNode } from "./ASTNode";
+import { BodyStatement } from "./BodyStatement";
 import { ComparisonExpression } from "./ComparisonExpression";
 import { LogicalOperation } from "./LogicalExpression";
 
@@ -19,12 +20,12 @@ export interface IfStatement extends ASTNode {
   /**
    * The body of the if statement, represented as an array of AST nodes.
    */
-  body: ASTNode[];
+  body: BodyStatement;
 
   /**
    * The body of the else clause, if present, represented as an array of AST nodes.
    */
-  elseBody?: ASTNode[];
+  elseBody?: BodyStatement;
 
   /**
    * The else-if clause, if present, represented as another if statement.

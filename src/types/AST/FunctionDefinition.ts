@@ -1,6 +1,7 @@
 import { ASTNode } from "./ASTNode";
 import { BinaryExpression } from "./BinaryExpression";
 import Token from "../Token";
+import { BodyStatement } from "./BodyStatement";
 
 /**
  * Represents a function declaration in the AST.
@@ -24,7 +25,7 @@ export interface FunctionDeclaration extends ASTNode {
   /**
    * The body of the function, represented as an array of AST nodes.
    */
-  body: ASTNode[];
+  body: BodyStatement;
 }
 
 /**

@@ -61,7 +61,3 @@ export interface Assignment extends ASTNode {
    */
   value: Token | ArrayLiteral | ObjectLiteral | BinaryExpression;
 }
-
-/**
- * Represents a variable definition in the AST.
- */
