@@ -1,5 +1,17 @@
 import Token from "../types/Token";
 import AnalizadorSintactico from "./AnalizadorSintactico";
+import type {
+  VariableDeclaration,
+  ErrorDefinition,
+  Assignment,
+  BinaryExpression,
+  ComparisonExpression,
+  ConstantVariableDeclaration,
+  FunctionCall,
+  FunctionDeclaration,
+  IfStatement,
+  LogicalOperation,
+} from "../types/AST";
 
 describe("AnalizadorSintactico", () => {
   describe("Asigments", () => {
@@ -11,7 +23,7 @@ describe("AnalizadorSintactico", () => {
           { type: "semicolon", value: ";", column: 6 },
         ];
         const resultado = AnalizadorSintactico(tokens);
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<VariableDeclaration>({
           type: "new_variable_declaration",
           variable: { type: "identifier", value: "x", column: 5 },
         });
@@ -24,8 +36,8 @@ describe("AnalizadorSintactico", () => {
           { type: "semicolon", value: ";", column: 8 },
         ];
         const resultado = AnalizadorSintactico(tokens);
-        expect(resultado).toEqual({
-          type: "error",
+        expect(resultado).toEqual<ErrorDefinition>({
+          type: "SyntaxError",
           message: "Expected an assignment after 'const' declaration",
           column: 8,
         });
@@ -40,7 +52,7 @@ describe("AnalizadorSintactico", () => {
           { type: "semicolon", value: ";", column: 12 },
         ];
         const resultado = AnalizadorSintactico(tokens);
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<ConstantVariableDeclaration>({
           type: "constant_variable_declaration",
           variable: { type: "identifier", value: "x", column: 7 },
           value: { type: "number", value: "5", column: 11 },
@@ -58,7 +70,7 @@ describe("AnalizadorSintactico", () => {
 
         const resultado = AnalizadorSintactico(tokens);
 
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "new_variable_declaration_assignment",
           variable: { type: "identifier", value: "x", column: 5 },
           value: { type: "string", value: '"Hello"', column: 9 },
@@ -76,7 +88,7 @@ describe("AnalizadorSintactico", () => {
 
         const resultado = AnalizadorSintactico(tokens);
 
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "new_variable_declaration_assignment",
           variable: { type: "identifier", value: "x", column: 5 },
           value: { type: "number", value: "42", column: 9 },
@@ -94,7 +106,7 @@ describe("AnalizadorSintactico", () => {
 
         const resultado = AnalizadorSintactico(tokens);
 
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "new_variable_declaration_assignment",
           variable: { type: "identifier", value: "x", column: 5 },
           value: { type: "boolean", value: "true", column: 9 },
@@ -111,7 +123,7 @@ describe("AnalizadorSintactico", () => {
           { type: "semicolon", value: ";", column: 5 },
         ];
         const resultado = AnalizadorSintactico(tokens);
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "assignment",
           variable: { type: "identifier", value: "x", column: 5 },
           value: { type: "identifier", value: "5", column: 4 },
@@ -128,7 +140,7 @@ describe("AnalizadorSintactico", () => {
 
         const resultado = AnalizadorSintactico(tokens);
 
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "assignment",
           variable: { type: "identifier", value: "x", column: 1 },
           value: { type: "string", value: '"Hello"', column: 4 },
@@ -144,7 +156,7 @@ describe("AnalizadorSintactico", () => {
         ];
 
         const resultado = AnalizadorSintactico(tokens);
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "assignment",
           variable: { type: "identifier", value: "x", column: 1 },
           value: { type: "boolean", value: "true", column: 4 },
@@ -165,7 +177,7 @@ describe("AnalizadorSintactico", () => {
 
         const resultado = AnalizadorSintactico(tokens);
 
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "new_variable_declaration_assignment",
           variable: { type: "identifier", value: "x", column: 5 },
           value: {
@@ -190,7 +202,7 @@ describe("AnalizadorSintactico", () => {
 
         const resultado = AnalizadorSintactico(tokens);
 
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "new_variable_declaration_assignment",
           variable: { type: "identifier", value: "x", column: 5 },
           value: {
@@ -218,7 +230,7 @@ describe("AnalizadorSintactico", () => {
 
         const resultado = AnalizadorSintactico(tokens);
 
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "new_variable_declaration_assignment",
           variable: { type: "identifier", value: "x", column: 5 },
           value: {
@@ -246,7 +258,7 @@ describe("AnalizadorSintactico", () => {
 
         const resultado = AnalizadorSintactico(tokens);
 
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "new_variable_declaration_assignment",
           variable: { type: "identifier", value: "x", column: 5 },
           value: {
@@ -276,7 +288,7 @@ describe("AnalizadorSintactico", () => {
 
         const resultado = AnalizadorSintactico(tokens);
 
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "new_variable_declaration_assignment",
           variable: { type: "identifier", value: "x", column: 5 },
           value: {
@@ -304,7 +316,7 @@ describe("AnalizadorSintactico", () => {
 
         const resultado = AnalizadorSintactico(tokens);
 
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "assignment",
           variable: { type: "identifier", value: "x", column: 1 },
           value: {
@@ -320,7 +332,7 @@ describe("AnalizadorSintactico", () => {
 
     describe("Object Asigments", () => {
       it("should parse empty object assignment", () => {
-        const tokens = [
+        const tokens: Token[] = [
           { type: "keyword", value: "let", column: 1 },
           { type: "identifier", value: "x", column: 5 },
           { type: "operator", value: "=", column: 7 },
@@ -329,7 +341,7 @@ describe("AnalizadorSintactico", () => {
           { type: "semicolon", value: ";", column: 11 },
         ];
         const resultado = AnalizadorSintactico(tokens);
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "new_variable_declaration_assignment",
           variable: { type: "identifier", value: "x", column: 5 },
           value: { type: "object", properties: [] },
@@ -337,7 +349,7 @@ describe("AnalizadorSintactico", () => {
       });
 
       it("should parse object assignment with strings and booleans and numbers ", () => {
-        const tokens = [
+        const tokens: Token[] = [
           { type: "keyword", value: "let", column: 1 },
           { type: "identifier", value: "x", column: 5 },
           { type: "operator", value: "=", column: 7 },
@@ -357,7 +369,7 @@ describe("AnalizadorSintactico", () => {
           { type: "semicolon", value: ";", column: 34 },
         ];
         const resultado = AnalizadorSintactico(tokens);
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "new_variable_declaration_assignment",
           variable: { type: "identifier", value: "x", column: 5 },
           value: {
@@ -381,7 +393,7 @@ describe("AnalizadorSintactico", () => {
       });
 
       it("should parse object assignment with strings and booleans and numbers without new variable declaration", () => {
-        const tokens = [
+        const tokens: Token[] = [
           { type: "identifier", value: "x", column: 1 },
           { type: "operator", value: "=", column: 2 },
           { type: "brace", value: "{", column: 4 },
@@ -400,7 +412,7 @@ describe("AnalizadorSintactico", () => {
           { type: "semicolon", value: ";", column: 29 },
         ];
         const resultado = AnalizadorSintactico(tokens);
-        expect(resultado).toEqual({
+        expect(resultado).toEqual<Assignment>({
           type: "assignment",
           variable: { type: "identifier", value: "x", column: 1 },
           value: {
@@ -436,7 +448,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<BinaryExpression>({
         type: "binary_expression",
         operator: "+",
         left: { type: "identifier", value: "x", column: 1 },
@@ -445,14 +457,14 @@ describe("AnalizadorSintactico", () => {
     });
 
     it("should parse subtraction operation", () => {
-      const tokens = [
+      const tokens: Token[] = [
         { type: "identifier", value: "x", column: 1 },
         { type: "operator", value: "-", column: 2 },
         { type: "number", value: "5", column: 4 },
         { type: "semicolon", value: ";", column: 5 },
       ];
       const resultado = AnalizadorSintactico(tokens);
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<BinaryExpression>({
         type: "binary_expression",
         operator: "-",
         left: { type: "identifier", value: "x", column: 1 },
@@ -461,14 +473,14 @@ describe("AnalizadorSintactico", () => {
     });
 
     it("should parse multiplication operation", () => {
-      const tokens = [
+      const tokens: Token[] = [
         { type: "identifier", value: "x", column: 1 },
         { type: "operator", value: "*", column: 2 },
         { type: "number", value: "5", column: 4 },
         { type: "semicolon", value: ";", column: 5 },
       ];
       const resultado = AnalizadorSintactico(tokens);
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<BinaryExpression>({
         type: "binary_expression",
         operator: "*",
         left: { type: "identifier", value: "x", column: 1 },
@@ -477,14 +489,14 @@ describe("AnalizadorSintactico", () => {
     });
 
     it("should parse division operation", () => {
-      const tokens = [
+      const tokens: Token[] = [
         { type: "identifier", value: "x", column: 1 },
         { type: "operator", value: "/", column: 2 },
         { type: "number", value: "5", column: 4 },
         { type: "semicolon", value: ";", column: 5 },
       ];
       const resultado = AnalizadorSintactico(tokens);
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<BinaryExpression>({
         type: "binary_expression",
         operator: "/",
         left: { type: "identifier", value: "x", column: 1 },
@@ -493,14 +505,14 @@ describe("AnalizadorSintactico", () => {
     });
 
     it("should parse modulo operation", () => {
-      const tokens = [
+      const tokens: Token[] = [
         { type: "identifier", value: "x", column: 1 },
         { type: "operator", value: "%", column: 2 },
         { type: "number", value: "5", column: 4 },
         { type: "semicolon", value: ";", column: 5 },
       ];
       const resultado = AnalizadorSintactico(tokens);
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<BinaryExpression>({
         type: "binary_expression",
         operator: "%",
         left: { type: "identifier", value: "x", column: 1 },
@@ -509,14 +521,14 @@ describe("AnalizadorSintactico", () => {
     });
 
     it("should parse exponentiation operation", () => {
-      const tokens = [
+      const tokens: Token[] = [
         { type: "identifier", value: "x", column: 1 },
         { type: "operator", value: "**", column: 2 },
         { type: "number", value: "5", column: 5 },
         { type: "semicolon", value: ";", column: 6 },
       ];
       const resultado = AnalizadorSintactico(tokens);
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<BinaryExpression>({
         type: "binary_expression",
         operator: "**",
         left: { type: "identifier", value: "x", column: 1 },
@@ -536,7 +548,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<BinaryExpression>({
         type: "binary_expression",
         operator: "+",
         left: { type: "identifier", value: "x", column: 2 },
@@ -556,7 +568,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<BinaryExpression>({
         type: "binary_expression",
         operator: "+",
         left: { type: "identifier", value: "x", column: 1 },
@@ -583,7 +595,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<BinaryExpression>({
         type: "binary_expression",
         operator: "*",
         left: {
@@ -615,7 +627,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<BinaryExpression>({
         type: "binary_expression",
         operator: "+",
         left: { type: "identifier", value: "x", column: 1 },
@@ -645,7 +657,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<ComparisonExpression>({
         type: "comparison_expression",
         operator: "==",
         left: { type: "identifier", value: "x", column: 1 },
@@ -654,14 +666,14 @@ describe("AnalizadorSintactico", () => {
     });
 
     it("should parse inequality operation", () => {
-      const tokens = [
+      const tokens: Token[] = [
         { type: "identifier", value: "x", column: 1 },
         { type: "operator", value: "!=", column: 2 },
         { type: "number", value: "5", column: 5 },
         { type: "semicolon", value: ";", column: 6 },
       ];
       const resultado = AnalizadorSintactico(tokens);
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<ComparisonExpression>({
         type: "comparison_expression",
         operator: "!=",
         left: { type: "identifier", value: "x", column: 1 },
@@ -670,14 +682,14 @@ describe("AnalizadorSintactico", () => {
     });
 
     it("should parse greater than operation", () => {
-      const tokens = [
+      const tokens: Token[] = [
         { type: "identifier", value: "x", column: 1 },
         { type: "operator", value: ">", column: 2 },
         { type: "number", value: "5", column: 4 },
         { type: "semicolon", value: ";", column: 5 },
       ];
       const resultado = AnalizadorSintactico(tokens);
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<ComparisonExpression>({
         type: "comparison_expression",
         operator: ">",
         left: { type: "identifier", value: "x", column: 1 },
@@ -686,14 +698,14 @@ describe("AnalizadorSintactico", () => {
     });
 
     it("should parse less than operation", () => {
-      const tokens = [
+      const tokens: Token[] = [
         { type: "identifier", value: "x", column: 1 },
         { type: "operator", value: "<", column: 2 },
         { type: "number", value: "5", column: 4 },
         { type: "semicolon", value: ";", column: 5 },
       ];
       const resultado = AnalizadorSintactico(tokens);
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<ComparisonExpression>({
         type: "comparison_expression",
         operator: "<",
         left: { type: "identifier", value: "x", column: 1 },
@@ -702,14 +714,14 @@ describe("AnalizadorSintactico", () => {
     });
 
     it("should parse greater than or equal to operation", () => {
-      const tokens = [
+      const tokens: Token[] = [
         { type: "identifier", value: "x", column: 1 },
         { type: "operator", value: ">=", column: 2 },
         { type: "number", value: "5", column: 5 },
         { type: "semicolon", value: ";", column: 6 },
       ];
       const resultado = AnalizadorSintactico(tokens);
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<ComparisonExpression>({
         type: "comparison_expression",
         operator: ">=",
         left: { type: "identifier", value: "x", column: 1 },
@@ -718,14 +730,14 @@ describe("AnalizadorSintactico", () => {
     });
 
     it("should parse less than or equal to operation", () => {
-      const tokens = [
+      const tokens: Token[] = [
         { type: "identifier", value: "x", column: 1 },
         { type: "operator", value: "<=", column: 2 },
         { type: "number", value: "5", column: 5 },
         { type: "semicolon", value: ";", column: 6 },
       ];
       const resultado = AnalizadorSintactico(tokens);
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<ComparisonExpression>({
         type: "comparison_expression",
         operator: "<=",
         left: { type: "identifier", value: "x", column: 1 },
@@ -745,7 +757,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<LogicalOperation>({
         type: "logical_operation",
         operator: "&&",
         left: { type: "identifier", value: "x", column: 1 },
@@ -761,7 +773,7 @@ describe("AnalizadorSintactico", () => {
         { type: "semicolon", value: ";", column: 6 },
       ];
       const resultado = AnalizadorSintactico(tokens);
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<LogicalOperation>({
         type: "logical_operation",
         operator: "||",
         left: { type: "identifier", value: "x", column: 1 },
@@ -778,7 +790,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<LogicalOperation>({
         type: "logical_operation",
         operator: "!",
         left: null,
@@ -799,7 +811,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<LogicalOperation>({
         type: "logical_operation",
         operator: "!",
         left: null,
@@ -833,7 +845,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<IfStatement>({
         type: "if_statement",
         condition: {
           type: "comparison_expression",
@@ -876,7 +888,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<IfStatement>({
         type: "if_statement",
         condition: {
           type: "comparison_expression",
@@ -931,7 +943,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<IfStatement>({
         type: "if_statement",
         condition: {
           type: "comparison_expression",
@@ -947,6 +959,7 @@ describe("AnalizadorSintactico", () => {
           },
         ],
         elseIf: {
+          type: "if_statement",
           condition: {
             type: "comparison_expression",
             operator: "<=",
@@ -995,7 +1008,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<IfStatement>({
         type: "if_statement",
         condition: {
           type: "comparison_expression",
@@ -1043,7 +1056,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<FunctionDeclaration>({
         type: "function_declaration",
         name: { type: "identifier", value: "myFunction", column: 9 },
         parameters: [],
@@ -1052,7 +1065,7 @@ describe("AnalizadorSintactico", () => {
     });
 
     it("should parse function declaration with parameters and body", () => {
-      const tokens = [
+      const tokens: Token[] = [
         { type: "keyword", value: "function", column: 1 },
         { type: "identifier", value: "myFunction", column: 9 },
         { type: "bracket", value: "(", column: 20 },
@@ -1069,7 +1082,7 @@ describe("AnalizadorSintactico", () => {
         { type: "brace", value: "}", column: 38 },
       ];
       const resultado = AnalizadorSintactico(tokens);
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<FunctionDeclaration>({
         type: "function_declaration",
         name: { type: "identifier", value: "myFunction", column: 9 },
         parameters: [
@@ -1103,7 +1116,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<FunctionCall>({
         type: "function_call",
         name: { type: "identifier", value: "myFunction", column: 1 },
         arguments: [
@@ -1123,7 +1136,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<FunctionCall>({
         type: "function_call",
         name: { type: "identifier", value: "myFunction", column: 1 },
         arguments: [],
@@ -1146,7 +1159,7 @@ describe("AnalizadorSintactico", () => {
 
       const resultado = AnalizadorSintactico(tokens);
 
-      expect(resultado).toEqual({
+      expect(resultado).toEqual<FunctionCall>({
         type: "function_call",
         name: { type: "identifier", value: "myFunction", column: 1 },
         arguments: [
