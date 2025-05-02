@@ -9,6 +9,9 @@ type TokenType =
   | "brace"
   | "string"
   | "comma"
-  | "bracket";
+  | "bracket"
+  | "unknown"
+  | "boolean"
+  ;
 
 export default TokenType;
