@@ -140,6 +140,73 @@ describe("AnalizadorLexico", () => {
     });
   });
 
+  describe("Variable assignment", () => {
+    it("should detect variable assignment", () => {
+      const line = "x = 10;";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "identifier", value: "x", column: 1 },
+        { type: "operator", value: "=", column: 3 },
+        { type: "number", value: "10", column: 5 },
+        { type: "semicolon", value: ";", column: 7 },
+      ] as Token[]);
+    });
+
+    it("should detect variable assignment with string", () => {
+      const line = "name = 'John';";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "identifier", value: "name", column: 1 },
+        { type: "operator", value: "=", column: 5 },
+        { type: "string", value: "'John'", column: 7 },
+        { type: "semicolon", value: ";", column: 13 },
+      ] as Token[]);
+    });
+
+    it("should detect variable assignment with boolean", () => {
+      const line = "isTrue = true;";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "identifier", value: "isTrue", column: 1 },
+        { type: "operator", value: "=", column: 8 },
+        { type: "boolean", value: "true", column: 10 },
+        { type: "semicolon", value: ";", column: 14 },
+      ] as Token[]);
+    });
+
+    it("should detect variable assignment with array", () => {
+      const line = "arr = [1, 2, 3];";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "identifier", value: "arr", column: 1 },
+        { type: "operator", value: "=", column: 5 },
+        { type: "bracket", value: "[", column: 7 },
+        { type: "number", value: "1", column: 8 },
+        { type: "comma", value: ",", column: 9 },
+        { type: "number", value: "2", column: 11 },
+        { type: "comma", value: ",", column: 12 },
+        { type: "number", value: "3", column: 14 },
+        { type: "bracket", value: "]", column: 15 },
+        { type: "semicolon", value: ";", column: 16 },
+      ] as Token[]);
+    });
+
+    it("should detect variable assignment with object", () => {
+      const line = "obj = { key: 'value' };";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "identifier", value: "obj", column: 1 },
+        { type: "operator", value: "=", column: 5 },
+        { type: "brace", value: "{", column: 7 },
+        { type: "identifier", value: "key", column: 9 },
+        { type: "colon", value: ":", column: 12 },
+        { type: "string", value: "'value'", column: 14 },
+        { type: "brace", value: "}", column: 22 },
+        { type: "semicolon", value: ";", column: 23 },
+      ] as Token[]);
+    });
+  });
+
   describe("if statements", () => {
     it("should detect if statement", () => {
       const line = "if (x > 10) { y = 20; }";
