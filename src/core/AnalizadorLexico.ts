@@ -1,5 +1,9 @@
-const AnalizadorLexico = (line: string) => {
-  throw new Error("Function not implemented.");
-};
+export default function AnalizadorLexico(line: string): any[] {
+  // Si la línea está vacía o contiene solo espacios, devuelve un arreglo vacío
+  if (line.trim() === "") {
+    return [];
+  }
 
-export default AnalizadorLexico;
+  // Implementación futura para otros casos
+  return [];
+}
