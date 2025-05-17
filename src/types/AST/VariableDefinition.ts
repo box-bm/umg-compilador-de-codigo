@@ -1,7 +1,5 @@
-import { ArrayLiteral } from "./ArrayLiteral";
 import { ASTNode } from "./ASTNode";
 import { BinaryExpression } from "./BinaryExpression";
-import { ObjectLiteral } from "./ObjectLiteral";
 import Token from "../Token";
 
 /**
@@ -46,10 +44,7 @@ export interface Assignment extends ASTNode {
   /**
    * The type of the AST node, always "assignment".
    */
-  type:
-    | "assignment"
-    | "new_variable_declaration_assignment"
-    | "constant_variable_declaration_assignment";
+  type: "assignment" | "new_variable_declaration_assignment";
 
   /**
    * The token representing the variable being assigned a value.
@@ -59,5 +54,5 @@ export interface Assignment extends ASTNode {
   /**
    * The value being assigned, which can be a token, an array literal, an object literal, or a binary expression.
    */
-  value: Token | ArrayLiteral | ObjectLiteral | BinaryExpression;
+  value: Token | BinaryExpression;
 }
