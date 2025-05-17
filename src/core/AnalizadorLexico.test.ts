@@ -82,6 +82,15 @@ describe("AnalizadorLexico", () => {
   });
 
   describe("declaraciones de variables", () => {
+    it("deberia parsear una declaracion de variable", () => {
+      const line = "let x";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "keyword", value: "let", column: 0 },
+        { type: "identifier", value: "x", column: 4 },
+      ] as Token[]);
+    });
+    
     it("debería manejar declaraciones de variables", () => {
       const line = "let x = 10";
       const result = AnalizadorLexico(line);
