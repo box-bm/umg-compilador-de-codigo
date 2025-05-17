@@ -2,14 +2,87 @@ import AnalizadorLexico from "./AnalizadorLexico";
 import type Token from "../types/Token";
 
 describe("AnalizadorLexico", () => {
-  it("should handle empty lines with spaces", () => {
-    const line = "   ";
-    const result = AnalizadorLexico(line);
-    expect(result).toEqual([] as Token[]);
+  describe("líneas vacías", () => {
+    it("debería manejar líneas vacías", () => {
+      const line = "";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([] as Token[]);
+    });
+    it("debería manejar líneas vacías con espacios", () => {
+      const line = "   ";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([] as Token[]);
+    });
   });
 
-  describe("variable declarations", () => {
-    it("should handle variable declarations", () => {
+  describe("tabulación", () => {
+    it("debería manejar tabulación", () => {
+      const line = "  let x = 10";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "keyword", value: "let", column: 2 },
+        { type: "identifier", value: "x", column: 6 },
+        { type: "operator", value: "=", column: 8 },
+        { type: "number", value: "10", column: 10 },
+      ] as Token[]);
+    });
+
+    it("debería manejar múltiples tabulaciones", () => {
+      const line = "        let x = 10";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "keyword", value: "let", column: 4 },
+        { type: "identifier", value: "x", column: 8 },
+        { type: "operator", value: "=", column: 10 },
+        { type: "number", value: "10", column: 12 },
+      ] as Token[]);
+    });
+  });
+
+  describe("Tipos de variables", () => {
+    it("debería manejar números", () => {
+      const line = "10";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "number", value: "10", column: 0 },
+      ] as Token[]);
+    });
+
+    it("debería manejar cadenas", () => {
+      const line = '"Hola"';
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "string", value: '"Hola"', column: 0 },
+      ] as Token[]);
+    });
+
+    it("debería manejar booleanos", () => {
+      const line = "true";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "boolean", value: "true", column: 0 },
+      ] as Token[]);
+    });
+
+    it("debería manejar identificadores", () => {
+      const line = "x";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "identifier", value: "x", column: 0 },
+      ] as Token[]);
+    });
+
+    it("debería manejar palabras reservadas", () => {
+      const line = "if";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "keyword", value: "if", column: 0 },
+      ] as Token[]);
+    });
+  });
+
+  describe("declaraciones de variables", () => {
+    it("debería manejar declaraciones de variables", () => {
       const line = "let x = 10";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -20,7 +93,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle constant declarations with strings", () => {
+    it("debería manejar declaraciones de constantes con cadenas", () => {
       const line = 'const y = "Hola"';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -31,7 +104,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should asign a value to a variable int", () => {
+    it("debería asignar un valor a una variable int", () => {
       const line = "x = 20";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -41,7 +114,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should asign a value to a variable string", () => {
+    it("debería asignar un valor a una variable string", () => {
       const line = 'x = "Hola"';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -52,8 +125,8 @@ describe("AnalizadorLexico", () => {
     });
   });
 
-  describe("arithmetic operators", () => {
-    it("should handle arithmetic operators", () => {
+  describe("operadores aritméticos", () => {
+    it("debería manejar operadores aritméticos", () => {
       const line = "x + y - z";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -65,7 +138,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle all arithmetic operators", () => {
+    it("debería manejar todos los operadores aritméticos", () => {
       const line = "x + y - z * 10 / 5 % 2";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -83,7 +156,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle arithmetic operators with numbers", () => {
+    it("debería manejar operadores aritméticos con números", () => {
       const line = "x + 10 - 20";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -95,7 +168,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle arithmetic operators with strings and numbers", () => {
+    it("debería manejar operadores aritméticos con cadenas y números", () => {
       const line = 'x + "Hola" - 20';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -108,8 +181,8 @@ describe("AnalizadorLexico", () => {
     });
   });
 
-  describe("logical operators", () => {
-    it("should handle logical operators", () => {
+  describe("operadores lógicos", () => {
+    it("debería manejar operadores lógicos", () => {
       const line = "x && y || z";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -121,7 +194,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle logical operators with numbers", () => {
+    it("debería manejar operadores lógicos con números", () => {
       const line = "x && 10 || 20";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -133,7 +206,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle logical operators, number with strings", () => {
+    it("debería manejar operadores lógicos, número con cadenas", () => {
       const line = 'x && "Hola" || 20';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -145,7 +218,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should negate a variable", () => {
+    it("debería negar una variable", () => {
       const line = "!x";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -155,8 +228,8 @@ describe("AnalizadorLexico", () => {
     });
   });
 
-  describe("comparison operators", () => {
-    it("should handle comparison operators", () => {
+  describe("operadores de comparación", () => {
+    it("debería manejar operadores de comparación", () => {
       const line = "x == y != z";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -168,7 +241,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle comparison operators with numbers", () => {
+    it("debería manejar operadores de comparación con números", () => {
       const line = "x == 10 != 20";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -180,7 +253,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle comparison operators with strings and numbers", () => {
+    it("debería manejar operadores de comparación con cadenas y números", () => {
       const line = 'x == "Hola" != 20';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -192,7 +265,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle comparison more than and less than", () => {
+    it("debería manejar mayor que y menor que", () => {
       const line = "x > 10 < 20";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -204,7 +277,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle comparison more than or equal and less than or equal", () => {
+    it("debería manejar mayor o igual y menor o igual", () => {
       const line = "x >= 10 <= 20";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -216,7 +289,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle comparison more than or equal and less than or equal with strings", () => {
+    it("debería manejar mayor o igual y menor o igual con cadenas", () => {
       const line = 'x >= "Hola" <= 20';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -229,8 +302,8 @@ describe("AnalizadorLexico", () => {
     });
   });
 
-  describe("if statements", () => {
-    it("should handle if statements", () => {
+  describe("sentencias if", () => {
+    it("debería manejar sentencias if", () => {
       const line = "if x > 10:";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -242,7 +315,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle if statements with strings", () => {
+    it("debería manejar sentencias if con cadenas", () => {
       const line = 'if x == "Hola":';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -254,7 +327,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle else statements", () => {
+    it("debería manejar sentencias else", () => {
       const line = "else:";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -263,7 +336,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle else if statements", () => {
+    it("debería manejar sentencias else if", () => {
       const line = "else if x < 5:";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -277,8 +350,8 @@ describe("AnalizadorLexico", () => {
     });
   });
 
-  describe("while statements", () => {
-    it("should handle while statements", () => {
+  describe("sentencias while", () => {
+    it("debería manejar sentencias while", () => {
       const line = "while x < 10:";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -290,7 +363,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle while statements with strings", () => {
+    it("debería manejar sentencias while con cadenas", () => {
       const line = 'while x == "Hola":';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -302,7 +375,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle do while statements", () => {
+    it("debería manejar sentencias do while", () => {
       const line = "do:";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -312,8 +385,8 @@ describe("AnalizadorLexico", () => {
     });
   });
 
-  describe("for statements", () => {
-    it("should handle for statemens", () => {
+  describe("sentencias for", () => {
+    it("debería manejar sentencias for", () => {
       const line = "for i = 1 to 10:";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -327,7 +400,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle for statements with setp", () => {
+    it("debería manejar sentencias for con step", () => {
       const line = "for i = 1 to 10 step 2:";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -343,7 +416,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle for statements with strings", () => {
+    it("debería manejar sentencias for con cadenas", () => {
       const line = 'for i = "Hola" to 10:';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -357,7 +430,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle for statements with strings and numbers", () => {
+    it("debería manejar sentencias for con cadenas y números", () => {
       const line = 'for i = "Hola" to 10:';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -372,8 +445,8 @@ describe("AnalizadorLexico", () => {
     });
   });
 
-  describe("switch statements", () => {
-    it("should handle switch statements", () => {
+  describe("sentencias switch", () => {
+    it("debería manejar sentencias switch", () => {
       const line = "switch x:";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -383,7 +456,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle case statements", () => {
+    it("debería manejar sentencias case", () => {
       const line = "case 1:";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -393,7 +466,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle case statements with strings", () => {
+    it("debería manejar sentencias case con cadenas", () => {
       const line = 'case "Hola":';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -403,7 +476,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("should handle default statements", () => {
+    it("debería manejar sentencias default", () => {
       const line = "default:";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
@@ -413,38 +486,14 @@ describe("AnalizadorLexico", () => {
     });
   });
 
-  describe("tabulation", () => {
-    it("should handle tabulation", () => {
-      const line = "  let x = 10";
-      const result = AnalizadorLexico(line);
-      expect(result).toEqual([
-        { type: "keyword", value: "let", column: 2 },
-        { type: "identifier", value: "x", column: 6 },
-        { type: "operator", value: "=", column: 8 },
-        { type: "number", value: "10", column: 10 },
-      ] as Token[]);
-    });
-
-    it("should handle multiple tabulations", () => {
-      const line = "        let x = 10";
-      const result = AnalizadorLexico(line);
-      expect(result).toEqual([
-        { type: "keyword", value: "let", column: 4 },
-        { type: "identifier", value: "x", column: 8 },
-        { type: "operator", value: "=", column: 10 },
-        { type: "number", value: "10", column: 12 },
-      ] as Token[]);
-    });
-  });
-
-  describe("Comentaries", () => {
-    it("should handle single line comments", () => {
+  describe("Comentarios", () => {
+    it("debería manejar comentarios de una línea", () => {
       const line = "# This is a comment";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([] as Token[]);
     });
 
-    it("should handle code with comment at the end", () => {
+    it("debería manejar código con comentario al final", () => {
       const line = "x = 10 # This is a comment";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([

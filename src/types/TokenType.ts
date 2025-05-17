@@ -2,37 +2,29 @@
  * Represents the various types of tokens that can be identified
  * during the lexical analysis phase of a compiler or interpreter.
  *
- * @typedef TokenType
- * @type {"keyword" | "identifier" | "colon" | "type" | "operator" | "number" | "semicolon" | "brace" | "string" | "comma" | "bracket" | "unknown" | "boolean"}
+ * This type is used to categorize tokens into different groups
+ * based on their roles in the source code.
  *
- * @property "keyword"    Represents a reserved word in the language.
- * @property "identifier" Represents a variable, function, or other user-defined name.
- * @property "colon"      Represents a colon (`:`) symbol.
- * @property "type"       Represents a type annotation or declaration.
- * @property "operator"   Represents an operator (e.g., `+`, `-`, `*`, `/`).
- * @property "number"     Represents a numeric literal.
- * @property "semicolon"  Represents a semicolon (`;`) symbol.
- * @property "brace"      Represents a brace (`{` or `}`) symbol.
- * @property "string"     Represents a string literal.
- * @property "comma"      Represents a comma (`,`) symbol.
- * @property "bracket"    Represents a bracket (`[` or `]`) symbol.
- * @property "unknown"    Represents an unrecognized or invalid token.
- * @property "boolean"    Represents a boolean literal (`true` or `false`).
+ * The types include:
+ * - `keyword`: Reserved words in the programming language (e.g., `if`, `else`, `while`).
+ * - `identifier`: Names given to variables, functions, classes, etc.
+ * - `punctuation`: Symbols that separate or organize code (e.g., `,`, `.`, `;`).
+ * - `operator`: Symbols that perform operations on variables and values (e.g., `+`, `-`, `*`, `/`).
+ * - `number`: Numeric literals (e.g., `42`, `3.14`).
+ * - `semicolon`: The semicolon symbol (`;`), often used to terminate statements.
+ * - `string`: String literals enclosed in quotes (e.g., `"Hello, World!"`).
+ * - `unknown`: Tokens that do not fit into any of the above categories.
+ * - `boolean`: Boolean literals (`true`, `false`).
  */
 type TokenType =
   | "keyword"
   | "identifier"
-  | "colon"
-  | "type"
+  | "punctuation"
   | "operator"
   | "number"
   | "semicolon"
-  | "brace"
   | "string"
-  | "comma"
-  | "bracket"
   | "unknown"
-  | "boolean"
-  ;
+  | "boolean";
 
 export default TokenType;
