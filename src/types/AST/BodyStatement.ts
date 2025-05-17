@@ -2,6 +2,7 @@ import { BinaryExpression } from "./BinaryExpression";
 import { ComparisonExpression } from "./ComparisonExpression";
 import { IfStatement } from "./IfStatement";
 import { LogicalOperation } from "./LogicalExpression";
+import { PrintStatement } from "./PrintStatement";
 
 import {
   Assignment,
@@ -25,6 +26,7 @@ type Body =
   | LogicalOperation
   | VariableDeclaration
   | Assignment
-  | ConstantVariableDeclaration;
+  | ConstantVariableDeclaration
+  | PrintStatement;
 
 export type BodyStatement = Body[];
