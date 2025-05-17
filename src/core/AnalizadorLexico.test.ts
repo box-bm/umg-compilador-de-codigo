@@ -503,4 +503,25 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
   });
+
+  describe("Desconocidos", () => {
+    it("debería manejar caracteres desconocidos", () => {
+      const line = "@";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "unknown", value: "@", column: 0 },
+      ] as Token[]);
+    });
+
+    it("debería manejar múltiples caracteres desconocidos", () => {
+      const line = "@sss #aa $ffff %aaaaa";
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "unknown", value: "@sss", column: 0 },
+        { type: "unknown", value: "#aa", column: 5 },
+        { type: "unknown", value: "$ffff", column: 8 },
+        { type: "unknown", value: "%aaaaa", column: 14 },
+      ] as Token[]);
+    });
+  });
 });
