@@ -1,5 +1,8 @@
 import { ASTNode } from "./ASTNode";
 import Token from "../Token";
+import { ComparisonExpression } from "./ComparisonExpression";
+
+type Side = Token | BinaryExpression | ComparisonExpression;
 
 /**
  * Represents a binary expression in the AST.
@@ -18,10 +21,10 @@ export interface BinaryExpression extends ASTNode {
   /**
    * The left operand of the binary expression, which can be a token or another binary expression.
    */
-  left: Token | BinaryExpression;
+  left: Side;
 
   /**
    * The right operand of the binary expression, which can be a token or another binary expression.
    */
-  right: Token | BinaryExpression;
+  right: Side;
 }
