@@ -15,6 +15,48 @@ x = 5   // ✅ Permitido (x es una variable mutable)
 y = "Adiós"   // ❌ Error (y es constante)
 ```
 
+## **📌 Operadores Aritmeticos**
+
+```plaintext
+let a = 10
+let b = 5
+let suma = a + b
+let resta = a - b
+let multiplicacion = a * b
+let division = a / b
+```
+
+## **📌 Operadores Lógicos (`&&`, `||`, `!`)**
+
+```plaintext
+let x = 10
+let y = 5
+
+if x > 5 && y < 10:
+    print "Ambas condiciones son verdaderas"
+
+if x > 5 || y > 10:
+    print "Al menos una condición es verdadera"
+
+let flag = false
+
+if !flag:
+    print "La condición se invirtió"
+```
+
+## **📌 Operadores de comparación**
+
+```plaintext
+let a = 10
+let b = 5
+let igual = a == b       // Igualdad
+let diferente = a != b   // Diferente
+let mayor = a > b       // Mayor que
+let menor = a < b       // Menor que
+let mayor_igual = a >= b // Mayor o igual que
+let menor_igual = a <= b // Menor o igual que
+```
+
 ## **📌 Estructuras de control (`if`, `else`)**
 
 ```plaintext
@@ -22,6 +64,8 @@ x = 10
 
 if x > 5:
     print "x es mayor que 5"
+else if x < 5 && x > 0 :
+    print "x es mayor a 0 y menor a 5
 else:
     print "x es menor o igual a 5"
 ```
@@ -71,24 +115,6 @@ switch opcion:
         print "Elegiste opción 3"
     default:
         print "Opción no válida"
-```
-
-## **📌 Operadores Lógicos (`&&`, `||`, `!`)**
-
-```plaintext
-let x = 10
-let y = 5
-
-if x > 5 && y < 10:
-    print "Ambas condiciones son verdaderas"
-
-if x > 5 || y > 10:
-    print "Al menos una condición es verdadera"
-
-let flag = false
-
-if !flag:
-    print "La condición se invirtió"
 ```
 
 ## **📌 Manejo de indentación en bloques**
