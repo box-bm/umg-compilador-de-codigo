@@ -5,3 +5,4 @@ export * from "./ErrorDefinition";
 export * from "./IfStatement";
 export * from "./LogicalExpression";
 export * from "./VariableDefinition";
+export * from "./BodyStatement";
