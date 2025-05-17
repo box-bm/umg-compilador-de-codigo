@@ -24,5 +24,5 @@ export interface LogicalOperation extends ASTNode {
   /**
    * The right operand of the logical operation, which can be a token or a binary expression.
    */
-  right: Token | BinaryExpression;
+  right?: Token | BinaryExpression;
 }

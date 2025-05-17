@@ -1,3 +1,4 @@
+import Token from "../Token";
 import { ASTNode } from "./ASTNode";
 import { BodyStatement } from "./BodyStatement";
 import { ComparisonExpression } from "./ComparisonExpression";
@@ -15,7 +16,7 @@ export interface IfStatement extends ASTNode {
   /**
    * The condition of the if statement, which can be a comparison expression or a logical operation.
    */
-  condition: ComparisonExpression | LogicalOperation;
+  condition: ComparisonExpression | LogicalOperation | Token;
 
   /**
    * The body of the if statement, represented as an array of AST nodes.

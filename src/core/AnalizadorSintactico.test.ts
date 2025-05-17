@@ -1,6 +1,10 @@
 import Token from "../types/Token";
 import AnalizadorSintactico from "./AnalizadorSintactico";
-import type { BodyStatement, ErrorDefinition } from "../types/AST";
+import type {
+  BodyStatement,
+  ComparisonExpression,
+  ErrorDefinition,
+} from "../types/AST";
 
 describe("AnalizadorSintactico", () => {
   describe("Variables", () => {
@@ -487,156 +491,156 @@ describe("AnalizadorSintactico", () => {
   });
 
   describe("Operadores de Comparacion", () => {
-    describe.each(["<", ">", "<=", ">=", "==", "!="])(
-      "Casos comunes del operador %s",
-      (operator) => {
-        it(`Deberia parsear el operador ${operator} con numeros`, () => {
-          const tokens: Token[][] = [
-            [
-              { type: "number", value: "10", column: 0 },
-              { type: "operator", value: operator, column: 2 },
-              { type: "number", value: "20", column: 4 },
-            ],
-          ];
-          const result = AnalizadorSintactico(tokens);
-          const expected: BodyStatement = [
-            {
-              type: "comparison_expression",
-              operator: operator,
-              left: {
-                type: "number",
-                value: "10",
-                column: 0,
-              },
-              right: {
-                type: "number",
-                value: "20",
-                column: 4,
-              },
+    describe.each(["<", ">", "<=", ">=", "==", "!="] as Pick<
+      ComparisonExpression,
+      "operator"
+    >["operator"][])("Casos comunes del operador %s", (operator) => {
+      it(`Deberia parsear el operador ${operator} con numeros`, () => {
+        const tokens: Token[][] = [
+          [
+            { type: "number", value: "10", column: 0 },
+            { type: "operator", value: operator, column: 2 },
+            { type: "number", value: "20", column: 4 },
+          ],
+        ];
+        const result = AnalizadorSintactico(tokens);
+        const expected: BodyStatement = [
+          {
+            type: "comparison_expression",
+            operator: operator,
+            left: {
+              type: "number",
+              value: "10",
+              column: 0,
             },
-          ];
-          expect(result).toEqual(expected);
-        });
-
-        it(`Deberia parsear el operador ${operator} con strings`, () => {
-          const tokens: Token[][] = [
-            [
-              { type: "string", value: '"10"', column: 0 },
-              { type: "operator", value: operator, column: 4 },
-              { type: "string", value: '"20"', column: 6 },
-            ],
-          ];
-          const result = AnalizadorSintactico(tokens);
-          const expected: BodyStatement = [
-            {
-              type: "comparison_expression",
-              operator: operator,
-              left: {
-                type: "string",
-                value: '"10"',
-                column: 0,
-              },
-              right: {
-                type: "string",
-                value: '"20"',
-                column: 6,
-              },
+            right: {
+              type: "number",
+              value: "20",
+              column: 4,
             },
-          ];
-          expect(result).toEqual(expected);
-        });
+          },
+        ];
+        expect(result).toEqual(expected);
+      });
 
-        it(`Deberia parsear el operador ${operator} con booleans`, () => {
-          const tokens: Token[][] = [
-            [
-              { type: "boolean", value: "true", column: 0 },
-              { type: "operator", value: operator, column: 5 },
-              { type: "boolean", value: "false", column: 7 },
-            ],
-          ];
-          const result = AnalizadorSintactico(tokens);
-          const expected: BodyStatement = [
-            {
-              type: "comparison_expression",
-              operator: operator,
-              left: {
-                type: "boolean",
-                value: "true",
-                column: 0,
-              },
-              right: {
-                type: "boolean",
-                value: "false",
-                column: 7,
-              },
+      it(`Deberia parsear el operador ${operator} con strings`, () => {
+        const tokens: Token[][] = [
+          [
+            { type: "string", value: '"10"', column: 0 },
+            { type: "operator", value: operator, column: 4 },
+            { type: "string", value: '"20"', column: 6 },
+          ],
+        ];
+        const result = AnalizadorSintactico(tokens);
+        const expected: BodyStatement = [
+          {
+            type: "comparison_expression",
+            operator: operator,
+            left: {
+              type: "string",
+              value: '"10"',
+              column: 0,
             },
-          ];
-          expect(result).toEqual(expected);
-        });
-
-        it(`Deberia parsear el operador ${operator} con identificadores`, () => {
-          const tokens: Token[][] = [
-            [
-              { type: "identifier", value: "x", column: 0 },
-              { type: "operator", value: operator, column: 2 },
-              { type: "identifier", value: "y", column: 4 },
-            ],
-          ];
-          const result = AnalizadorSintactico(tokens);
-          const expected: BodyStatement = [
-            {
-              type: "comparison_expression",
-              operator: operator,
-              left: {
-                type: "identifier",
-                value: "x",
-                column: 0,
-              },
-              right: {
-                type: "identifier",
-                value: "y",
-                column: 4,
-              },
+            right: {
+              type: "string",
+              value: '"20"',
+              column: 6,
             },
-          ];
-          expect(result).toEqual(expected);
-        });
+          },
+        ];
+        expect(result).toEqual(expected);
+      });
 
-        it(`Deberia lanzar error al operar keywords`, () => {
-          const tokens: Token[][] = [
-            [
-              { type: "number", value: "10", column: 0 },
-              { type: "operator", value: operator, column: 2 },
-              { type: "keyword", value: "if", column: 4 },
-            ],
-          ];
-          const error: ErrorDefinition = {
-            type: "SyntaxError",
-            message: `No se puede usar un keyword como operando`,
-            column: 4,
-            line: 1,
-          };
-          expect(AnalizadorSintactico(tokens)).toEqual(error);
-        });
+      it(`Deberia parsear el operador ${operator} con booleans`, () => {
+        const tokens: Token[][] = [
+          [
+            { type: "boolean", value: "true", column: 0 },
+            { type: "operator", value: operator, column: 5 },
+            { type: "boolean", value: "false", column: 7 },
+          ],
+        ];
+        const result = AnalizadorSintactico(tokens);
+        const expected: BodyStatement = [
+          {
+            type: "comparison_expression",
+            operator: operator,
+            left: {
+              type: "boolean",
+              value: "true",
+              column: 0,
+            },
+            right: {
+              type: "boolean",
+              value: "false",
+              column: 7,
+            },
+          },
+        ];
+        expect(result).toEqual(expected);
+      });
 
-        it(`Deberia lanzar error con una cadena desconocida`, () => {
-          const tokens: Token[][] = [
-            [
-              { type: "unknown", value: "@#", column: 0 },
-              { type: "operator", value: operator, column: 4 },
-              { type: "number", value: "20", column: 6 },
-            ],
-          ];
-          const error: ErrorDefinition = {
-            type: "SyntaxError",
-            message: "No se puede usar un token desconocido",
-            column: 0,
-            line: 1,
-          };
-          expect(AnalizadorSintactico(tokens)).toEqual(error);
-        });
-      }
-    );
+      it(`Deberia parsear el operador ${operator} con identificadores`, () => {
+        const tokens: Token[][] = [
+          [
+            { type: "identifier", value: "x", column: 0 },
+            { type: "operator", value: operator, column: 2 },
+            { type: "identifier", value: "y", column: 4 },
+          ],
+        ];
+        const result = AnalizadorSintactico(tokens);
+        const expected: BodyStatement = [
+          {
+            type: "comparison_expression",
+            operator: operator,
+            left: {
+              type: "identifier",
+              value: "x",
+              column: 0,
+            },
+            right: {
+              type: "identifier",
+              value: "y",
+              column: 4,
+            },
+          },
+        ];
+        expect(result).toEqual(expected);
+      });
+
+      it(`Deberia lanzar error al operar keywords`, () => {
+        const tokens: Token[][] = [
+          [
+            { type: "number", value: "10", column: 0 },
+            { type: "operator", value: operator, column: 2 },
+            { type: "keyword", value: "if", column: 4 },
+          ],
+        ];
+        const error: ErrorDefinition = {
+          type: "SyntaxError",
+          message: `No se puede usar un keyword como operando`,
+          column: 4,
+          line: 1,
+        };
+        expect(AnalizadorSintactico(tokens)).toEqual(error);
+      });
+
+      it(`Deberia lanzar error con una cadena desconocida`, () => {
+        const tokens: Token[][] = [
+          [
+            { type: "unknown", value: "@#", column: 0 },
+            { type: "operator", value: operator, column: 4 },
+            { type: "number", value: "20", column: 6 },
+          ],
+        ];
+        const error: ErrorDefinition = {
+          type: "SyntaxError",
+          message: "No se puede usar un token desconocido",
+          column: 0,
+          line: 1,
+        };
+        expect(AnalizadorSintactico(tokens)).toEqual(error);
+      });
+    });
   });
 
   describe("Operadores logicos", () => {
@@ -709,9 +713,9 @@ describe("AnalizadorSintactico", () => {
       const result = AnalizadorSintactico(tokens);
       const expected: BodyStatement = [
         {
-          type: "unary_expression",
+          type: "logical_operation",
           operator: "!",
-          argument: {
+          left: {
             type: "boolean",
             value: "true",
             column: 1,
@@ -1005,7 +1009,7 @@ describe("AnalizadorSintactico", () => {
         ],
       ];
       const result = AnalizadorSintactico(tokens);
-      const expected = [
+      const expected: BodyStatement = [
         {
           type: "if_statement",
           condition: {
@@ -1032,34 +1036,33 @@ describe("AnalizadorSintactico", () => {
               },
             },
           ],
-          elseIfBodyStatementList: [
-            {
-              condition: {
-                type: "comparison_expression",
-                operator: "<=",
-                left: {
-                  type: "identifier",
-                  value: "y",
-                  column: 7,
-                },
-                right: {
-                  type: "number",
-                  value: "20",
-                  column: 12,
+          elseIf: {
+            type: "if_statement",
+            condition: {
+              type: "comparison_expression",
+              operator: "<=",
+              left: {
+                type: "identifier",
+                value: "y",
+                column: 7,
+              },
+              right: {
+                type: "number",
+                value: "20",
+                column: 12,
+              },
+            },
+            body: [
+              {
+                type: "print_statement",
+                argument: {
+                  type: "string",
+                  value: '"Es menor o igual a 20"',
+                  column: 8,
                 },
               },
-              body: [
-                {
-                  type: "print_statement",
-                  argument: {
-                    type: "string",
-                    value: '"Es menor o igual a 20"',
-                    column: 8,
-                  },
-                },
-              ],
-            },
-          ],
+            ],
+          },
         },
       ];
       expect(result).toEqual(expected);
@@ -1181,6 +1184,55 @@ describe("AnalizadorSintactico", () => {
             column: 2,
           },
           body: [
+            {
+              type: "print_statement",
+              argument: {
+                type: "string",
+                value: '"Es 10"',
+                column: 8,
+              },
+            },
+          ],
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+  });
+
+  describe("Sentencias while", () => {
+    it("Deberia parsear una sentencia while correctamente", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "while", column: 0 },
+          { type: "identifier", value: "x", column: 6 },
+          { type: "operator", value: "<", column: 8 },
+          { type: "number", value: "10", column: 10 },
+          { type: "punctuation", value: ":", column: 12 },
+        ],
+        [
+          { type: "keyword", value: "print", column: 2 },
+          { type: "string", value: '"Es 10"', column: 8 },
+        ],
+      ];
+      const result = AnalizadorSintactico(tokens);
+      const expected = [
+        {
+          type: "while_statement",
+          condition: {
+            type: "comparison_expression",
+            operator: "<",
+            left: {
+              type: "identifier",
+              value: "x",
+              column: 6,
+            },
+            right: {
+              type: "number",
+              value: "10",
+              column: 10,
+            },
+          },
+          bodyStatementList: [
             {
               type: "print_statement",
               argument: {
