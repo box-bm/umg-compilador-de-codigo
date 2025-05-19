@@ -1,4 +1,3 @@
-
 import Token from "../types/Token";
 
 const tokenTable = {
@@ -29,7 +28,7 @@ const AnalizadorLexico = (line: string): Token[] => {
     return [];
   }
 
-const tokens: Token[] = [];
+  const tokens: Token[] = [];
 
   // Si la declaración utiliza "let" se evalúan diferentes casos:
   if (line.includes("let")) {
