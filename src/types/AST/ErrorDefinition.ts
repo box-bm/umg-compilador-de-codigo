@@ -13,6 +13,11 @@ export interface ErrorDefinition {
   column: number;
 
   /**
+   * The line number in the source code where the error occurred.
+   */
+  line: number;
+
+  /**
    * The type of the error, which can be one of the following:
    * - `SyntaxError`: Indicates a syntax-related issue in the code.
    * - `SemanticError`: Indicates a semantic issue, such as type mismatches or undefined variables.

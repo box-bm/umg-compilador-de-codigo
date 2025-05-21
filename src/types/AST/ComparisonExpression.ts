@@ -13,7 +13,7 @@ export interface ComparisonExpression extends ASTNode {
   /**
    * The operator used in the comparison expression.
    */
-  operator: string;
+  operator: "<" | "<=" | ">" | ">=" | "==" | "!=";
 
   /**
    * The left operand of the comparison expression.
