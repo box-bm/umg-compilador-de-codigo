@@ -313,7 +313,7 @@ describe("AnalizadorLexico", () => {
 
   describe("sentencias if", () => {
     it("debería manejar sentencias if", () => {
-      const line = "if x > 10:";
+      const line = "if x > 10 :";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "if", column: 0 },
@@ -325,7 +325,7 @@ describe("AnalizadorLexico", () => {
     });
 
     it("debería manejar sentencias if con cadenas", () => {
-      const line = 'if x == "Hola":';
+      const line = 'if x == "Hola" :';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "if", column: 0 },
@@ -346,7 +346,7 @@ describe("AnalizadorLexico", () => {
     });
 
     it("debería manejar sentencias else if", () => {
-      const line = "else if x < 5:";
+      const line = "else if x < 5 :";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "else", column: 0 },
@@ -361,42 +361,42 @@ describe("AnalizadorLexico", () => {
 
   describe("sentencias while", () => {
     it("debería manejar sentencias while", () => {
-      const line = "while x < 10:";
+      const line = "while x < 10 :";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "while", column: 0 },
         { type: "identifier", value: "x", column: 6 },
         { type: "operator", value: "<", column: 8 },
         { type: "number", value: "10", column: 10 },
-        { type: "punctuation", value: ":", column: 12 },
+        { type: "punctuation", value: ":", column: 13 },
       ] as Token[]);
     });
 
     it("debería manejar sentencias while con cadenas", () => {
-      const line = 'while x == "Hola":';
+      const line = 'while x == "Hola" :';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "while", column: 0 },
         { type: "identifier", value: "x", column: 6 },
         { type: "operator", value: "==", column: 8 },
         { type: "string", value: '"Hola"', column: 11 },
-        { type: "punctuation", value: ":", column: 17 },
+        { type: "punctuation", value: ":", column: 19 },
       ] as Token[]);
     });
 
     it("debería manejar sentencias do while", () => {
-      const line = "do:";
+      const line = "do :";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "do", column: 0 },
-        { type: "punctuation", value: ":", column: 2 },
+        { type: "punctuation", value: ":", column: 3 },
       ] as Token[]);
     });
   });
 
   describe("sentencias for", () => {
     it("debería manejar sentencias for", () => {
-      const line = "for i = 1 to 10:";
+      const line = "for i = 1 to 10 :";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "for", column: 0 },
@@ -405,12 +405,12 @@ describe("AnalizadorLexico", () => {
         { type: "number", value: "1", column: 8 },
         { type: "keyword", value: "to", column: 10 },
         { type: "number", value: "10", column: 13 },
-        { type: "punctuation", value: ":", column: 15 },
+        { type: "punctuation", value: ":", column: 16 },
       ] as Token[]);
     });
 
     it("debería manejar sentencias for con step", () => {
-      const line = "for i = 1 to 10 step 2:";
+      const line = "for i = 1 to 10 step 2 :";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "for", column: 0 },
@@ -421,12 +421,12 @@ describe("AnalizadorLexico", () => {
         { type: "number", value: "10", column: 13 },
         { type: "keyword", value: "step", column: 16 },
         { type: "number", value: "2", column: 21 },
-        { type: "punctuation", value: ":", column: 22 },
+        { type: "punctuation", value: ":", column: 23 },
       ] as Token[]);
     });
 
     it("debería manejar sentencias for con cadenas", () => {
-      const line = 'for i = "Hola" to 10:';
+      const line = 'for i = "Hola" to 10 :';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "for", column: 0 },
@@ -435,12 +435,12 @@ describe("AnalizadorLexico", () => {
         { type: "string", value: '"Hola"', column: 8 },
         { type: "keyword", value: "to", column: 14 },
         { type: "number", value: "10", column: 17 },
-        { type: "punctuation", value: ":", column: 19 },
+        { type: "punctuation", value: ":", column: 21 },
       ] as Token[]);
     });
 
     it("debería manejar sentencias for con cadenas y números", () => {
-      const line = 'for i = "Hola" to 10:';
+      const line = 'for i = "Hola" to 10 :';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "for", column: 0 },
@@ -449,14 +449,14 @@ describe("AnalizadorLexico", () => {
         { type: "string", value: '"Hola"', column: 8 },
         { type: "keyword", value: "to", column: 14 },
         { type: "number", value: "10", column: 17 },
-        { type: "punctuation", value: ":", column: 19 },
+        { type: "punctuation", value: ":", column: 21 },
       ] as Token[]);
     });
   });
 
   describe("sentencias switch", () => {
     it("debería manejar sentencias switch", () => {
-      const line = "switch x:";
+      const line = "switch x :";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "switch", column: 0 },
@@ -466,31 +466,31 @@ describe("AnalizadorLexico", () => {
     });
 
     it("debería manejar sentencias case", () => {
-      const line = "case 1:";
+      const line = "case 1 :";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "case", column: 0 },
         { type: "number", value: "1", column: 5 },
-        { type: "punctuation", value: ":", column: 6 },
+        { type: "punctuation", value: ":", column: 7 },
       ] as Token[]);
     });
 
     it("debería manejar sentencias case con cadenas", () => {
-      const line = 'case "Hola":';
+      const line = 'case "Hola" :';
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "case", column: 0 },
         { type: "string", value: '"Hola"', column: 5 },
-        { type: "punctuation", value: ":", column: 11 },
+        { type: "punctuation", value: ":", column: 12 },
       ] as Token[]);
     });
 
     it("debería manejar sentencias default", () => {
-      const line = "default:";
+      const line = "default :";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "default", column: 0 },
-        { type: "punctuation", value: ":", column: 7 },
+        { type: "punctuation", value: ":", column: 8 },
       ] as Token[]);
     });
   });
