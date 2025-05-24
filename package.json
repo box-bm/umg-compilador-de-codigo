@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Proyecto final compiladores umg, lenguaje base para generar codigo en base a una sintaxis definida",
   "main": "index.ts",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "test": "jest",
