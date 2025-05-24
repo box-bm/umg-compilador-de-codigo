@@ -227,6 +227,7 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
+    //DUDAS CON EL TEST de una variable negada
     it("debería negar una variable", () => {
       const line = "!x";
       const result = AnalizadorLexico(line);
@@ -305,8 +306,8 @@ describe("AnalizadorLexico", () => {
         { type: "identifier", value: "x", column: 0 },
         { type: "operator", value: ">=", column: 2 },
         { type: "string", value: '"Hola"', column: 5 },
-        { type: "operator", value: "<=", column: 11 },
-        { type: "number", value: "20", column: 14 },
+        { type: "operator", value: "<=", column: 12 },
+        { type: "number", value: "20", column: 15 },
       ] as Token[]);
     });
   });
@@ -320,7 +321,7 @@ describe("AnalizadorLexico", () => {
         { type: "identifier", value: "x", column: 3 },
         { type: "operator", value: ">", column: 5 },
         { type: "number", value: "10", column: 7 },
-        { type: "punctuation", value: ":", column: 9 },
+        { type: "punctuation", value: ":", column: 10 },
       ] as Token[]);
     });
 
@@ -332,16 +333,16 @@ describe("AnalizadorLexico", () => {
         { type: "identifier", value: "x", column: 3 },
         { type: "operator", value: "==", column: 5 },
         { type: "string", value: '"Hola"', column: 8 },
-        { type: "punctuation", value: ":", column: 14 },
+        { type: "punctuation", value: ":", column: 15 },
       ] as Token[]);
     });
 
-    it("debería manejar sentencias else", () => {
-      const line = "else:";
+    it("debería manejar sentencias else", () => { //Separe el else del signo : 
+      const line = "else :";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "else", column: 0 },
-        { type: "punctuation", value: ":", column: 4 },
+        { type: "punctuation", value: ":", column: 5 },
       ] as Token[]);
     });
 
@@ -354,7 +355,7 @@ describe("AnalizadorLexico", () => {
         { type: "identifier", value: "x", column: 8 },
         { type: "operator", value: "<", column: 10 },
         { type: "number", value: "5", column: 12 },
-        { type: "punctuation", value: ":", column: 13 },
+        { type: "punctuation", value: ":", column: 14 },
       ] as Token[]);
     });
   });
@@ -380,7 +381,7 @@ describe("AnalizadorLexico", () => {
         { type: "identifier", value: "x", column: 6 },
         { type: "operator", value: "==", column: 8 },
         { type: "string", value: '"Hola"', column: 11 },
-        { type: "punctuation", value: ":", column: 19 },
+        { type: "punctuation", value: ":", column: 18 },
       ] as Token[]);
     });
 
@@ -433,8 +434,8 @@ describe("AnalizadorLexico", () => {
         { type: "identifier", value: "i", column: 4 },
         { type: "operator", value: "=", column: 6 },
         { type: "string", value: '"Hola"', column: 8 },
-        { type: "keyword", value: "to", column: 14 },
-        { type: "number", value: "10", column: 17 },
+        { type: "keyword", value: "to", column: 15 },
+        { type: "number", value: "10", column: 18 },
         { type: "punctuation", value: ":", column: 21 },
       ] as Token[]);
     });
@@ -447,8 +448,8 @@ describe("AnalizadorLexico", () => {
         { type: "identifier", value: "i", column: 4 },
         { type: "operator", value: "=", column: 6 },
         { type: "string", value: '"Hola"', column: 8 },
-        { type: "keyword", value: "to", column: 14 },
-        { type: "number", value: "10", column: 17 },
+        { type: "keyword", value: "to", column: 15 },
+        { type: "number", value: "10", column: 18 },
         { type: "punctuation", value: ":", column: 21 },
       ] as Token[]);
     });
@@ -528,8 +529,8 @@ describe("AnalizadorLexico", () => {
       expect(result).toEqual([
         { type: "unknown", value: "@sss", column: 0 },
         { type: "unknown", value: "#aa", column: 5 },
-        { type: "unknown", value: "$ffff", column: 8 },
-        { type: "unknown", value: "%aaaaa", column: 14 },
+        { type: "unknown", value: "$ffff", column: 9 },
+        { type: "unknown", value: "%aaaaa", column: 15 },
       ] as Token[]);
     });
   });
