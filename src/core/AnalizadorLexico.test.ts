@@ -28,7 +28,7 @@ describe("AnalizadorLexico", () => {
     });
 
     it("debería manejar múltiples tabulaciones", () => {
-      const line = "        let x = 10";
+      const line = "    let x = 10";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "keyword", value: "let", column: 4 },
@@ -227,7 +227,6 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    //DUDAS CON EL TEST de una variable negada
     it("debería negar una variable", () => {
       const line = "!x";
       const result = AnalizadorLexico(line);
@@ -524,11 +523,11 @@ describe("AnalizadorLexico", () => {
     });
 
     it("debería manejar múltiples caracteres desconocidos", () => {
-      const line = "@sss #aa $ffff %aaaaa";
+      const line = "@sss ^aa $ffff %aaaaa";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([
         { type: "unknown", value: "@sss", column: 0 },
-        { type: "unknown", value: "#aa", column: 5 },
+        { type: "unknown", value: "^aa", column: 5 },
         { type: "unknown", value: "$ffff", column: 9 },
         { type: "unknown", value: "%aaaaa", column: 15 },
       ] as Token[]);

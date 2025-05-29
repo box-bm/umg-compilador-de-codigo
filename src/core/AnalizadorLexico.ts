@@ -1,42 +1,41 @@
-  import Token from "../types/Token";
-  import TokenType from "../types/TokenType";
+import Token from "../types/Token";
+import TokenType from "../types/TokenType";
 
-  const tableMatch: {
-    regex: RegExp;
-    type: TokenType;
-  }[] = [
-    {
-      regex: /^let|^if|^else|^while|^const|^for|^do|^to|^step|^switch|^case|^default$/,
-      type: 'keyword',
-    },
-    {
-      regex: /^:$/,
-      type: 'punctuation'
-    },
-    {
-      regex: /^true|^false$/,
-      type: 'boolean',
-    },
-    {
-      regex: /^[0-9]+$/,
-      type: 'number',
-    },
-    {
-      regex: /^"([^"\\]|\\.)*"$/,
-      type: 'string',
-    },
-    {
-      regex: /^(?:\+\+|--|&&|\|\||[+\-*\/=<>!%])+$/
-  ,
-      type: 'operator',
-    },
+const tableMatch: {
+  regex: RegExp;
+  type: TokenType;
+}[] = [
   {
-    regex: /^[a-zA-Z_][a-zA-Z0-9_]*$/, //Duda con el test 230
+    regex:
+      /^let|^if|^else|^while|^const|^for|^do|^to|^step|^switch|^case|^default$/,
+    type: "keyword",
+  },
+  {
+    regex: /^:$/,
+    type: "punctuation",
+  },
+  {
+    regex: /^true|^false$/,
+    type: "boolean",
+  },
+  {
+    regex: /^[0-9]+$/,
+    type: "number",
+  },
+  {
+    regex: /^"([^"\\]|\\.)*"$/,
+    type: "string",
+  },
+  {
+    regex: /^(?:\+\+|--|&&|\|\||[+\-*\/=<>!%])+$/,
+    type: "operator",
+  },
+  {
+    regex: /^[a-zA-Z_][a-zA-Z0-9_]*$/,
     type: "identifier",
   },
+];
 
-  ];
-    
 const AnalizadorLexico = (line: string): Token[] => {
   if (line.trimEnd() === "") {
     return [];
@@ -46,23 +45,28 @@ const AnalizadorLexico = (line: string): Token[] => {
     return [];
   }
 
-  const lineaSinComentario = line.includes(" #") 
-    ? line.split(" #")[0].trimEnd() 
+  const lineaSinComentario = line.includes(" #")
+    ? line.split(" #")[0].trimEnd()
     : line.trimEnd();
 
   if (lineaSinComentario === "") {
     return [];
   }
 
-  // Separar operadores de identificadores con espacio si están juntos
-  const elementosLinea = lineaSinComentario.replace(/([+\-*\/=!<>!%])([a-zA-Z_]+)/g, "$1 $2").split(" ");
+  const elementosLinea = lineaSinComentario
+    .trim()
+    .replace(/([!])([a-zA-Z_][a-zA-Z0-9_]*)/g, "$1 $2")
+    .split(" ");
 
   const tokens: Token[] = [];
 
+  // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < elementosLinea.length; i++) {
     const elemento = elementosLinea[i];
     let matched = false;
 
+    // Valida cada palabra en la línea con las expresiones regulares
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let x = 0; x < tableMatch.length; x++) {
       const { regex, type } = tableMatch[x];
       if (regex.test(elemento)) {
@@ -88,4 +92,4 @@ const AnalizadorLexico = (line: string): Token[] => {
   return tokens;
 };
 
-  export default AnalizadorLexico;
+export default AnalizadorLexico;
