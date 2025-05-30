@@ -343,7 +343,7 @@ function parseBody(
         }
         if (tokens[2].type !== "operator" || tokens[2].value !== "=") {
           return error(
-            `Falta el signo de igual`,
+            `Falta el signo igual en variables${tokens[0].value === "const" ? " constantes" : ""}`,
             tokens[2]?.column ?? tokens[1].column,
             i + 1
           );
