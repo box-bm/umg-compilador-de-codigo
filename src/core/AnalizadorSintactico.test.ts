@@ -203,6 +203,82 @@ describe("AnalizadorSintactico", () => {
 
         expect(AnalizadorSintactico(tokens)).toEqual(error);
       });
+
+      it("Deberia lanzar error si falta el signo de igual en variables", () => {
+        const tokens: Token[][] = [
+          [
+            { type: "keyword", value: "let", column: 0 },
+            { type: "identifier", value: "x", column: 4 },
+            { type: "number", value: "10", column: 6 },
+          ],
+        ];
+
+        const error: ErrorDefinition = {
+          type: "SyntaxError",
+          message: "Falta el signo igual en variables",
+          column: 6,
+          line: 1,
+        };
+
+        expect(AnalizadorSintactico(tokens)).toEqual(error);
+      });
+
+      it("Deberia lanzar error si falta el signo igual en variables constantes", () => {
+        const tokens: Token[][] = [
+          [
+            { type: "keyword", value: "const", column: 0 },
+            { type: "identifier", value: "x", column: 6 },
+            { type: "number", value: "10", column: 8 },
+          ],
+        ];
+
+        const error: ErrorDefinition = {
+          type: "SyntaxError",
+          message: "Falta el signo igual en variables constantes",
+          column: 8,
+          line: 1,
+        };
+
+        expect(AnalizadorSintactico(tokens)).toEqual(error);
+      });
+
+      it("Deberia lanzar error si la variable no tiene nombre", () => {
+        const tokens: Token[][] = [
+          [
+            { type: "keyword", value: "let", column: 0 },
+            { type: "operator", value: "=", column: 4 },
+            { type: "number", value: "10", column: 6 },
+          ],
+        ];
+
+        const error: ErrorDefinition = {
+          type: "SyntaxError",
+          message: "La variable no tiene nombre",
+          column: 4,
+          line: 1,
+        };
+
+        expect(AnalizadorSintactico(tokens)).toEqual(error);
+      });
+
+      it("Deberia lanzar error si la variable constante no tiene nombre", () => {
+        const tokens: Token[][] = [
+          [
+            { type: "keyword", value: "const", column: 0 },
+            { type: "operator", value: "=", column: 6 },
+            { type: "number", value: "10", column: 8 },
+          ],
+        ];
+
+        const error: ErrorDefinition = {
+          type: "SyntaxError",
+          message: "La variable constante no tiene nombre",
+          column: 6,
+          line: 1,
+        };
+
+        expect(AnalizadorSintactico(tokens)).toEqual(error);
+      });
     });
   });
 

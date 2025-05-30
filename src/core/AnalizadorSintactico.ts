@@ -307,68 +307,94 @@ function parseBody(
     // LET/CONST declaration
     if (
       tokens[0].type === "keyword" &&
-      tokens[0].value === "let" &&
-      tokens.length === 2 &&
-      tokens[1].type === "identifier"
+      (tokens[0].value === "let" || tokens[0].value === "const")
     ) {
-      body.push({
-        type: "new_variable_declaration",
-        variable: tokens[1],
-      });
-      i++;
-      continue;
-    }
-    if (
-      tokens[0].type === "keyword" &&
-      tokens[0].value === "let" &&
-      tokens.length === 4 &&
-      tokens[1].type === "identifier" &&
-      tokens[2].type === "operator" &&
-      tokens[2].value === "="
-    ) {
-      const value = tokens[3];
-      if (value.type === "unknown")
-        return error("Token desconocido", value.column, i + 1);
-      if (value.type === "keyword")
-        return error("No se puede asignar un keyword", value.column, i + 1);
-      body.push({
-        type: "new_variable_declaration_assignment",
-        variable: tokens[1],
-        value,
-      });
-      i++;
-      continue;
-    }
-    if (
-      tokens[0].type === "keyword" &&
-      tokens[0].value === "const" &&
-      tokens.length === 4 &&
-      tokens[1].type === "identifier" &&
-      tokens[2].type === "operator" &&
-      tokens[2].value === "="
-    ) {
-      const value = tokens[3];
-      if (value.type === "unknown")
-        return error("Token desconocido", value.column, i + 1);
-      if (value.type === "keyword")
-        return error("No se puede asignar un keyword", value.column, i + 1);
-      body.push({
-        type: "new_variable_declaration_assignment",
-        variable: tokens[1],
-        value,
-      });
-      i++;
-      continue;
-    }
-    if (
-      tokens[0].type === "keyword" &&
-      tokens[0].value === "const" &&
-      tokens.length === 2 &&
-      tokens[1].type === "identifier"
-    ) {
+      // let/const x
+      if (tokens.length === 2) {
+        if (tokens[1].type !== "identifier") {
+          return error(
+            `La variable${tokens[0].value === "const" ? " constante" : ""} no tiene nombre`,
+            tokens[1]?.column ?? tokens[0].column,
+            i + 1
+          );
+        }
+        if (tokens[0].value === "const") {
+          return error(
+            "La variable constante no tiene valor",
+            tokens[1].column,
+            i + 1
+          );
+        }
+        body.push({
+          type: "new_variable_declaration",
+          variable: tokens[1],
+        });
+        i++;
+        continue;
+      }
+      // let/const x = valor
+      if (tokens.length === 4) {
+        if (tokens[1].type !== "identifier") {
+          return error(
+            `La variable${tokens[0].value === "const" ? " constante" : ""} no tiene nombre`,
+            tokens[1]?.column ?? tokens[0].column,
+            i + 1
+          );
+        }
+        if (tokens[2].type !== "operator" || tokens[2].value !== "=") {
+          return error(
+            `Falta el signo de igual`,
+            tokens[2]?.column ?? tokens[1].column,
+            i + 1
+          );
+        }
+        const value = tokens[3];
+        if (value.type === "unknown")
+          return error("Token desconocido", value.column, i + 1);
+        if (value.type === "keyword")
+          return error("No se puede asignar un keyword", value.column, i + 1);
+        body.push({
+          type: "new_variable_declaration_assignment",
+          variable: tokens[1],
+          value,
+        });
+        i++;
+        continue;
+      }
+      // let/const x = (faltan tokens)
+      if (tokens.length === 3) {
+        if (tokens[1].type !== "identifier") {
+          return error(
+            `La variable${tokens[0].value === "const" ? " constante" : ""} no tiene nombre`,
+            tokens[1]?.column ?? tokens[0].column,
+            i + 1
+          );
+        }
+        if (tokens[2].type === "operator" && tokens[2].value === "=") {
+          return error(
+            `Falta el valor de la variable${tokens[0].value === "const" ? " constante" : ""}`,
+            tokens[2].column,
+            i + 1
+          );
+        }
+        return error(
+          `Falta el signo igual en variables${tokens[0].value === "const" ? " constantes" : ""}`,
+          tokens[2]?.column ?? tokens[1].column,
+          i + 1
+        );
+      }
+      // let/const sin nombre
+      if (tokens.length === 1) {
+        return error(
+          `La variable${tokens[0].value === "const" ? " constante" : ""} no tiene nombre`,
+          tokens[0].column,
+          i + 1
+        );
+      }
+      // let/const con más de 4 tokens (error de sintaxis)
       return error(
-        "La variable constante no tiene valor",
-        tokens[1].column,
+        "Sintaxis inválida en declaración de variable",
+        tokens[0].column,
         i + 1
       );
     }
