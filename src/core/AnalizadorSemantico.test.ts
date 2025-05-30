@@ -258,6 +258,46 @@ describe("AnalizadorSemantico", () => {
       };
       expect(AnalizadorSemantico(ast)).toEqual(error);
     });
+
+    it("Deberia permitir comparaciones entre identificadores", () => {
+      const ast: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "x", column: 0 },
+          value: { type: "number", value: "10", column: 2 },
+        },
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "y", column: 4 },
+          value: { type: "number", value: "20", column: 6 },
+        },
+        {
+          type: "comparison_expression",
+          operator: "<",
+          left: { type: "identifier", value: "x", column: 0 },
+          right: { type: "identifier", value: "y", column: 4 },
+        },
+      ];
+      expect(AnalizadorSemantico(ast)).toEqual(true);
+    });
+
+    it("Deberia detectar comparación entre identificador no declarado y número", () => {
+      const ast: BodyStatement = [
+        {
+          type: "comparison_expression",
+          operator: "<",
+          left: { type: "identifier", value: "x", column: 0 },
+          right: { type: "number", value: "10", column: 2 },
+        },
+      ];
+      const error: ErrorDefinition = {
+        type: "SemanticError",
+        message: "Variable 'x' no declarada",
+        column: 0,
+        line: 1,
+      };
+      expect(AnalizadorSemantico(ast)).toEqual(error);
+    });
   });
 
   describe("Operadores lógicos", () => {
@@ -371,6 +411,55 @@ describe("AnalizadorSemantico", () => {
         },
       ];
       expect(AnalizadorSemantico(ast)).toEqual(true);
+    });
+
+    it("deberia detectar variables no declaradas en la condición del if", () => {
+      const ast: BodyStatement = [
+        {
+          type: "if_statement",
+          condition: { type: "identifier", value: "x", column: 2 },
+          body: [],
+        },
+      ];
+      const error: ErrorDefinition = {
+        type: "SemanticError",
+        message: "Variable 'x' no declarada",
+        column: 2,
+        line: 1,
+      };
+      expect(AnalizadorSemantico(ast)).toEqual(error);
+    });
+
+    it("deberia deetectar variables no asignada en la comparación del if", () => {
+      const ast: BodyStatement = [
+        {
+          type: 'new_variable_declaration_assignment',
+          variable: { type: "identifier", value: "x", column: 0 },
+          value: { type: "number", value: "5", column: 2 },
+        },
+        {
+          type: 'new_variable_declaration',
+          variable: { type: "identifier", value: "y", column: 4 },
+        },
+        {
+          type: "if_statement",
+          condition: {
+            type: "comparison_expression",
+            operator: "<",
+            left: { type: "identifier", value: "x", column: 0 },
+            right: { type: "identifier", value: "y", column: 4 },
+          },
+          body: [],
+        },  
+      ];
+      
+      const error: ErrorDefinition = {
+        type: "SemanticError",
+        message: "Variable 'y' no declarada",
+        column: 4,
+        line: 3,
+      };
+      expect(AnalizadorSemantico(ast)).toEqual(error);
     });
   });
 

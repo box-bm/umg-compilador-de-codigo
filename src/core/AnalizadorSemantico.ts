@@ -1,5 +1,9 @@
 import { BodyStatement } from "../types/AST";
 import { ErrorDefinition } from "../types/AST/ErrorDefinition";
+import Token from "../types/Token";
+import type { BinaryExpression } from "../types/AST/BinaryExpression";
+import type { ComparisonExpression } from "../types/AST/ComparisonExpression";
+import type { LogicalOperation } from "../types/AST/LogicalExpression";
 
 // Utilidad para obtener el tipo de un valor AST
 function getType(
@@ -11,18 +15,18 @@ function getType(
   allowUnknownIdAs?: string
 ): string | ErrorDefinition {
   if (!expr || typeof expr !== "object" || !("type" in expr)) return "unknown";
-  const e = expr as any;
+  const e = expr as { type: string };
   if (e.type === "identifier") {
-    const v = ctx[e.value];
+    const id = expr as Token;
+    const v = ctx[id.value];
     if (!v) {
       return {
         type: "SemanticError",
-        message: `Variable '${e.value}' no declarada`,
-        column: e.column,
+        message: `Variable '${id.value}' no declarada`,
+        column: id.column,
         line: 1,
       };
     }
-    // Permitir inferencia de tipo si es unknown y se espera un tipo concreto
     if (v.type === "unknown" && allowUnknownIdAs) {
       v.type = allowUnknownIdAs;
       return allowUnknownIdAs;
@@ -33,90 +37,109 @@ function getType(
   if (e.type === "string") return "string";
   if (e.type === "boolean") return "boolean";
   if (e.type === "binary_expression") {
-    let l = getType(e.left, ctx);
+    const be = expr as BinaryExpression;
+    let l = getType(be.left, ctx);
     if (typeof l === "object") return l;
-    let r = getType(e.right, ctx);
+    let r = getType(be.right, ctx);
     if (typeof r === "object") return r;
     // Si uno es unknown y el otro es number o string, inferir el tipo
     if (l === "unknown" && (r === "number" || r === "string")) {
-      l = getType(e.left, ctx, r);
+      l = getType(be.left, ctx, r);
       if (typeof l === "object") return l;
     }
     if (r === "unknown" && (l === "number" || l === "string")) {
-      r = getType(e.right, ctx, l);
+      r = getType(be.right, ctx, l);
       if (typeof r === "object") return r;
     }
     if (l !== r) {
       return {
         type: "SemanticError",
         message: `No se puede operar entre tipos '${l}' y '${r}'`,
-        column: e.right.column,
+        column: (be.right as Token).column,
         line: 1,
       };
     }
-    if (l === "string" && e.operator !== "+") {
+    if (l === "string" && be.operator !== "+") {
       // Mensaje esperado por los tests: siempre con el operador '-'
       return {
         type: "SemanticError",
         message: `No se puede operar entre tipos 'string' y 'string' con el operador '-'`,
-        column: e.right.column,
+        column: (be.right as Token).column,
         line: 1,
       };
     }
     return l;
   }
   if (e.type === "comparison_expression") {
-    let l = getType(e.left, ctx);
+    const ce = expr as ComparisonExpression;
+    let l = getType(ce.left, ctx);
+    if (l === 'unknown') {
+      return {
+        type: "SemanticError",
+        message: `Variable '${(ce.left as Token).value}' no declarada`,
+        column: (ce.left as Token).column,
+        line: 1,
+      };
+    }
     if (typeof l === "object") return l;
-    let r = getType(e.right, ctx);
+    let r = getType(ce.right, ctx);
+    if (r === 'unknown') {
+      return {
+        type: "SemanticError",
+        message: `Variable '${(ce.right as Token).value}' no declarada`,
+        column: (ce.right as Token).column,
+        line: 1,
+      };
+    }
     if (typeof r === "object") return r;
     if (
       l === "unknown" &&
       (r === "number" || r === "string" || r === "boolean")
     ) {
-      l = getType(e.left, ctx, r);
+      l = getType(ce.left, ctx, r);
       if (typeof l === "object") return l;
     }
     if (
       r === "unknown" &&
       (l === "number" || l === "string" || l === "boolean")
     ) {
-      r = getType(e.right, ctx, l);
+      r = getType(ce.right, ctx, l);
       if (typeof r === "object") return r;
     }
     if (l !== r) {
       return {
         type: "SemanticError",
         message: `No se puede comparar '${l}' con '${r}'`,
-        column: e.right.column,
+        column: (ce.right as Token).column,
         line: 1,
       };
     }
     return "boolean";
   }
   if (e.type === "logical_operation") {
-    if (e.operator === "!") {
-      const l = getType(e.left, ctx, "boolean");
+    const lo = expr as LogicalOperation;
+    if (lo.operator === "!") {
+      const l = getType(lo.left, ctx, "boolean");
       if (typeof l === "object") return l;
       if (l !== "boolean") {
         return {
           type: "SemanticError",
           message: `No se puede operar entre tipos '${l}' y 'boolean'`,
-          column: e.left.column,
+          column: (lo.left as Token).column,
           line: 1,
         };
       }
       return "boolean";
     } else {
-      const l = getType(e.left, ctx, "boolean");
+      const l = getType(lo.left, ctx, "boolean");
       if (typeof l === "object") return l;
-      const r = getType(e.right, ctx, "boolean");
+      const r = getType(lo.right, ctx, "boolean");
       if (typeof r === "object") return r;
       if (l !== "boolean" || r !== "boolean") {
         return {
           type: "SemanticError",
           message: `No se puede operar entre tipos '${l}' y '${r}'`,
-          column: e.right.column,
+          column: (lo.right as Token).column,
           line: 1,
         };
       }
@@ -128,15 +151,15 @@ function getType(
 
 function getColumnFromCondition(cond: unknown): number {
   if (!cond || typeof cond !== "object" || !("type" in cond)) return 0;
-  const c = cond as any;
+  const c = cond as { type: string };
   if (c.type === "comparison_expression" || c.type === "logical_operation") {
-    if (c.left && typeof c.left === "object" && "column" in c.left)
-      return c.left.column;
-    if (c.right && typeof c.right === "object" && "column" in c.right)
-      return c.right.column;
+    if ("left" in c && c.left && typeof c.left === "object" && "column" in c.left)
+      return (c.left as Token).column;
+    if ("right" in c && c.right && typeof c.right === "object" && "column" in c.right)
+      return (c.right as Token).column;
     return 0;
   }
-  if ("column" in c) return c.column;
+  if ("column" in c) return (c as Token).column;
   return 0;
 }
 
@@ -262,13 +285,14 @@ function checkBody(
         return t;
       }
     } else if (stmt.type === "print_statement") {
-      const arg = stmt.argument as any;
+      const arg = stmt.argument;
       if (arg.type === "identifier") {
-        if (!localCtx[arg.value]) {
+        const id = arg as Token;
+        if (!localCtx[id.value]) {
           return {
             type: "SemanticError",
-            message: `Variable '${arg.value}' no declarada`,
-            column: arg.column,
+            message: `Variable '${id.value}' no declarada`,
+            column: id.column,
             line: currentLine,
           };
         }
