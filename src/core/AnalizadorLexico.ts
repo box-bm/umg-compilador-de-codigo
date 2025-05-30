@@ -53,10 +53,21 @@ const AnalizadorLexico = (line: string): Token[] => {
     return [];
   }
 
-  const elementosLinea = lineaSinComentario
-    .trim()
-    .replace(/([!])([a-zA-Z_][a-zA-Z0-9_]*)/g, "$1 $2")
-    .split(" ");
+  // Divide la línea en elementos, manteniendo los strings entre comillas como un solo token
+  // y separando los operadores de negación (!) cuando están pegados a un identificador o número
+  const elementosLinea: string[] = [];
+  const regex = /"([^"\\]|\\.)*"|[^\s]+/g;
+  let match;
+  while ((match = regex.exec(lineaSinComentario)) !== null) {
+    const token = match[0];
+    // Si el token empieza con '!' y no es solo '!'
+    if (token.length > 1 && token[0] === "!" && token !== "!=") {
+      elementosLinea.push("!");
+      elementosLinea.push(token.slice(1));
+    } else {
+      elementosLinea.push(token);
+    }
+  }
 
   const tokens: Token[] = [];
 

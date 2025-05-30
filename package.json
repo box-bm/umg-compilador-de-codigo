@@ -2,10 +2,11 @@
   "name": "generadordecodigo",
   "version": "1.0.0",
   "description": "Proyecto final compiladores umg, lenguaje base para generar codigo en base a una sintaxis definida",
-  "main": "index.ts",
+  "main": "dist/index.js",
   "type": "module",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --outDir dist",
     "test": "jest",
     "lint": "npx eslint ./src/**",
     "lint:fix": "npx eslint ./src/** --fix"

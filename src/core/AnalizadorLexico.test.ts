@@ -56,6 +56,14 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
+    it("debería manejar cadenas con espacios", () => {
+      const line = '"Hola que tal"';
+      const result = AnalizadorLexico(line);
+      expect(result).toEqual([
+        { type: "string", value: '"Hola que tal"', column: 0 },
+      ] as Token[]);
+    });
+
     it("debería manejar booleanos", () => {
       const line = "true";
       const result = AnalizadorLexico(line);
