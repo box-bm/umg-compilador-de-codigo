@@ -1207,7 +1207,7 @@ describe("AnalizadorSintactico", () => {
           { type: "identifier", value: "x", column: 6 },
           { type: "operator", value: "<", column: 8 },
           { type: "number", value: "10", column: 10 },
-          { type: "punctuation", value: ":", column: 12 },
+          { type: "punctuation", value: ":", column: 13 },
         ],
         [
           { type: "keyword", value: "print", column: 2 },
@@ -1215,7 +1215,7 @@ describe("AnalizadorSintactico", () => {
         ],
       ];
       const result = AnalizadorSintactico(tokens);
-      const expected = [
+      const expected: BodyStatement = [
         {
           type: "while_statement",
           condition: {
@@ -1232,12 +1232,127 @@ describe("AnalizadorSintactico", () => {
               column: 10,
             },
           },
-          bodyStatementList: [
+          body: [
             {
               type: "print_statement",
               argument: {
                 type: "string",
                 value: '"Es 10"',
+                column: 8,
+              },
+            },
+          ],
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+  });
+
+  describe("Sentencias for", () => {
+    it("Deberia parsear una sentencia for correctamente", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "for", column: 0 },
+          { type: "identifier", value: "i", column: 4 },
+          { type: "operator", value: "=", column: 6 },
+          { type: "number", value: "1", column: 8 },
+          { type: "keyword", value: "to", column: 10 },
+          { type: "number", value: "10", column: 13 },
+          { type: "punctuation", value: ":", column: 16 },
+        ],
+        [
+          { type: "keyword", value: "print", column: 2 },
+          { type: "string", value: '"Iteracion"', column: 8 },
+        ],
+      ];
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "for_statement",
+          iterator: {
+            type: "new_variable_declaration",
+            variable: {
+              column: 4,
+              type: "identifier",
+              value: "i",
+            },
+          },
+          init: {
+            type: "number",
+            value: "1",
+            column: 8,
+          },
+          end: {
+            type: "number",
+            value: "10",
+            column: 13,
+          },
+          body: [
+            {
+              type: "print_statement",
+              argument: {
+                type: "string",
+                value: '"Iteracion"',
+                column: 8,
+              },
+            },
+          ],
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+
+    it("Deberia parsear una sentencia for con step", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "for", column: 0 },
+          { type: "identifier", value: "i", column: 4 },
+          { type: "operator", value: "=", column: 6 },
+          { type: "number", value: "1", column: 8 },
+          { type: "keyword", value: "to", column: 10 },
+          { type: "number", value: "10", column: 13 },
+          { type: "keyword", value: "step", column: 16 },
+          { type: "number", value: "2", column: 21 },
+          { type: "punctuation", value: ":", column: 23 },
+        ],
+        [
+          { type: "keyword", value: "print", column: 2 },
+          { type: "string", value: '"Iteracion"', column: 8 },
+        ],
+      ];
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "for_statement",
+          iterator: {
+            type: "new_variable_declaration",
+            variable: {
+              column: 4,
+              type: "identifier",
+              value: "i",
+            },
+          },
+          init: {
+            type: "number",
+            value: "1",
+            column: 8,
+          },
+          end: {
+            type: "number",
+            value: "10",
+            column: 13,
+          },
+          step: {
+            type: "number",
+            value: "2",
+            column: 21,
+          },
+          body: [
+            {
+              type: "print_statement",
+              argument: {
+                type: "string",
+                value: '"Iteracion"',
                 column: 8,
               },
             },
