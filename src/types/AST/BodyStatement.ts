@@ -1,5 +1,6 @@
 import { BinaryExpression } from "./BinaryExpression";
 import { ComparisonExpression } from "./ComparisonExpression";
+import { ForStatement } from "./ForStatement";
 import { IfStatement } from "./IfStatement";
 import { LogicalOperation } from "./LogicalExpression";
 import { PrintStatement } from "./PrintStatement";
@@ -9,6 +10,7 @@ import {
   ConstantVariableDeclaration,
   VariableDeclaration,
 } from "./VariableDefinition";
+import { WhileStatement } from "./WhileStatement";
 
 /**
  * Represents the body of a statement in the Abstract Syntax Tree (AST).
@@ -27,6 +29,8 @@ type Body =
   | VariableDeclaration
   | Assignment
   | ConstantVariableDeclaration
-  | PrintStatement;
+  | PrintStatement
+  | ForStatement
+  | WhileStatement;
 
 export type BodyStatement = Body[];

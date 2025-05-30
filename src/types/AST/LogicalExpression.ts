@@ -1,6 +1,7 @@
 import { ASTNode } from "./ASTNode";
 import { BinaryExpression } from "./BinaryExpression";
 import Token from "../Token";
+import { ComparisonExpression } from "./ComparisonExpression";
 
 /**
  * Represents a logical operation in the AST.
@@ -19,10 +20,10 @@ export interface LogicalOperation extends ASTNode {
   /**
    * The left operand of the logical operation, which can be null.
    */
-  left: Token | null;
+  left: Token | BinaryExpression | ComparisonExpression | null;
 
   /**
    * The right operand of the logical operation, which can be a token or a binary expression.
    */
-  right?: Token | BinaryExpression;
+  right?: Token | BinaryExpression | ComparisonExpression;
 }
