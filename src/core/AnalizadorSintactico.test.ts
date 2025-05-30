@@ -908,7 +908,7 @@ describe("AnalizadorSintactico", () => {
               argument: {
                 type: "string",
                 value: '"Es 10"',
-                column: 6,
+                column: 8,
               },
             },
           ],
@@ -963,7 +963,7 @@ describe("AnalizadorSintactico", () => {
               argument: {
                 type: "string",
                 value: '"Es 10"',
-                column: 6,
+                column: 8,
               },
             },
           ],
@@ -1032,7 +1032,7 @@ describe("AnalizadorSintactico", () => {
               argument: {
                 type: "string",
                 value: '"Es 10"',
-                column: 6,
+                column: 8,
               },
             },
           ],
@@ -1075,6 +1075,7 @@ describe("AnalizadorSintactico", () => {
           { type: "identifier", value: "x", column: 2 },
           { type: "operator", value: "&&", column: 8 },
           { type: "identifier", value: "y", column: 11 },
+          { type: "punctuation", value: ":", column: 12 },
         ],
         [
           { type: "keyword", value: "print", column: 2 },
