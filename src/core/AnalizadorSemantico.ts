@@ -145,11 +145,14 @@ function checkBody(
   parentCtx?: Record<
     string,
     { type: string; constant?: boolean; forIterator?: boolean }
-  >
+  >,
+  baseLine = 1 // Nueva variable para la línea base
 ): true | ErrorDefinition {
-  // Inicializa el contexto local con todas las variables declaradas en el body
   const localCtx = { ...(parentCtx || {}) };
-  for (const stmt of body) {
+  for (let i = 0; i < body.length; i++) {
+    const stmt = body[i];
+    const currentLine = baseLine + i;
+
     if (stmt.type === "new_variable_declaration") {
       const v = stmt.variable.value;
       if (localCtx[v] && !localCtx[v].constant) {
@@ -157,7 +160,7 @@ function checkBody(
           type: "SemanticError",
           message: `Variable '${v}' redeclarada`,
           column: stmt.variable.column,
-          line: 1,
+          line: currentLine,
         };
       }
       if (!localCtx[v]) {
@@ -170,7 +173,7 @@ function checkBody(
           type: "SemanticError",
           message: `Variable '${v}' redeclarada`,
           column: stmt.variable.column,
-          line: 1,
+          line: currentLine,
         };
       }
       if (!localCtx[v]) {
@@ -184,13 +187,14 @@ function checkBody(
         stmt.type === "new_variable_declaration_assignment") &&
       !localCtx[stmt.variable.value]
     ) {
-      // No declarar aquí, solo para evitar error de acceso
       localCtx[stmt.variable.value] = { type: "unknown" };
     }
   }
-  console.log("Contexto local inicial:", localCtx);
-  
-  for (const stmt of body) {
+
+  for (let i = 0; i < body.length; i++) {
+    const stmt = body[i];
+    const currentLine = baseLine + i;
+
     if (stmt.type === "new_variable_declaration") {
       const v = stmt.variable.value;
       if (localCtx[v] && localCtx[v].type !== "unknown") {
@@ -198,22 +202,22 @@ function checkBody(
           type: "SemanticError",
           message: `Variable '${v}' redeclarada`,
           column: stmt.variable.column,
-          line: 1,
+          line: currentLine,
         };
       }
       localCtx[v] = { type: "unknown" };
-    
+
     } else if (
       stmt.type === "assignment" ||
       stmt.type === "new_variable_declaration_assignment"
     ) {
       const v = stmt.variable.value;
-       if (localCtx[v].constant) {
+      if (localCtx[v].constant) {
         return {
           type: "SemanticError",
           message: `No se puede reasignar una constante`,
           column: stmt.variable.column,
-          line: 1,
+          line: currentLine,
         };
       }
       if (!localCtx[v]) {
@@ -221,32 +225,42 @@ function checkBody(
           type: "SemanticError",
           message: `Variable '${v}' no declarada`,
           column: stmt.variable.column,
-          line: 1,
+          line: currentLine,
         };
       }
-     
       if (localCtx[v].forIterator) {
         return {
           type: "SemanticError",
           message: `No se puede reasignar el iterador del for`,
           column: stmt.variable.column,
-          line: 1,
+          line: currentLine,
         };
       }
-      // Inferir tipo en la primera asignación si era unknown
       const valType = getType(stmt.value, localCtx);
-      if (typeof valType === "object") return valType;
+      if (typeof valType === "object") {
+        valType.line = currentLine;
+        return valType;
+      }
       if (localCtx[v].type === "unknown") localCtx[v].type = valType;
       else localCtx[v].type = valType;
     } else if (stmt.type === "binary_expression") {
       const t = getType(stmt, localCtx);
-      if (typeof t === "object") return t;
+      if (typeof t === "object") {
+        t.line = currentLine;
+        return t;
+      }
     } else if (stmt.type === "comparison_expression") {
       const t = getType(stmt, localCtx);
-      if (typeof t === "object") return t;
+      if (typeof t === "object") {
+        t.line = currentLine;
+        return t;
+      }
     } else if (stmt.type === "logical_operation") {
       const t = getType(stmt, localCtx);
-      if (typeof t === "object") return t;
+      if (typeof t === "object") {
+        t.line = currentLine;
+        return t;
+      }
     } else if (stmt.type === "print_statement") {
       const arg = stmt.argument as any;
       if (arg.type === "identifier") {
@@ -255,7 +269,7 @@ function checkBody(
             type: "SemanticError",
             message: `Variable '${arg.value}' no declarada`,
             column: arg.column,
-            line: 1,
+            line: currentLine,
           };
         }
       } else if (
@@ -264,31 +278,36 @@ function checkBody(
         arg.type === "logical_operation"
       ) {
         const t = getType(arg, localCtx);
-        if (typeof t === "object") return t;
+        if (typeof t === "object") {
+          t.line = currentLine;
+          return t;
+        }
       }
     } else if (stmt.type === "if_statement") {
       const condType = getType(stmt.condition, localCtx);
-      if (typeof condType === "object") return condType;
+      if (typeof condType === "object") {
+        condType.line = currentLine;
+        return condType;
+      }
       if (condType !== "boolean") {
         return {
           type: "SemanticError",
           message: `La condición de if debe ser booleana`,
           column: getColumnFromCondition(stmt.condition),
-          line: 1,
+          line: currentLine,
         };
       }
-      const res = checkBody(stmt.body, localCtx);
+      const res = checkBody(stmt.body, localCtx, currentLine + 1);
       if (res !== true) return res;
       if (stmt.elseBody) {
-        const resElse = checkBody(stmt.elseBody, localCtx);
+        const resElse = checkBody(stmt.elseBody, localCtx, currentLine + 1);
         if (resElse !== true) return resElse;
       }
       if (stmt.elseIf) {
-        const resElseIf = checkBody([stmt.elseIf], localCtx);
+        const resElseIf = checkBody([stmt.elseIf], localCtx, currentLine + 1);
         if (resElseIf !== true) return resElseIf;
       }
     } else if (stmt.type === "while_statement") {
-      // Si la condición es una comparación y da error, devolver ese error primero
       if (
         stmt.condition &&
         typeof stmt.condition === "object" &&
@@ -296,9 +315,11 @@ function checkBody(
         stmt.condition.type === "comparison_expression"
       ) {
         const cmpRes = getType(stmt.condition, localCtx);
-        if (typeof cmpRes === "object") return cmpRes;
+        if (typeof cmpRes === "object") {
+          cmpRes.line = currentLine;
+          return cmpRes;
+        }
       }
-      // Si la condición es un identificador, permite inferir tipo booleano si es unknown
       if (
         stmt.condition &&
         typeof stmt.condition === "object" &&
@@ -306,20 +327,25 @@ function checkBody(
         stmt.condition.type === "identifier"
       ) {
         const idType = getType(stmt.condition, localCtx, "boolean");
-        if (typeof idType === "object") return idType;
+        if (typeof idType === "object") {
+          idType.line = currentLine;
+          return idType;
+        }
       }
       const condType = getType(stmt.condition, localCtx);
-      if (typeof condType === "object") return condType;
-      // Permitir identificador booleano como condición
+      if (typeof condType === "object") {
+        condType.line = currentLine;
+        return condType;
+      }
       if (condType !== "boolean") {
         return {
           type: "SemanticError",
           message: `La condición de while debe ser booleana`,
           column: getColumnFromCondition(stmt.condition),
-          line: 1,
+          line: currentLine,
         };
       }
-      const res = checkBody(stmt.body, localCtx);
+      const res = checkBody(stmt.body, localCtx, currentLine + 1);
       if (res !== true) return res;
     } else if (stmt.type === "for_statement") {
       const iter = stmt.iterator.variable.value;
@@ -328,15 +354,15 @@ function checkBody(
           type: "SemanticError",
           message: `Variable '${iter}' ya declarada anteriormente`,
           column: stmt.iterator.variable.column,
-          line: 1,
+          line: currentLine,
         };
       }
-      if(stmt.step && stmt.step.type !== "number") {
+      if (stmt.step && stmt.step.type !== "number") {
         return {
           type: "SemanticError",
           message: `El step del for debe ser un número`,
           column: stmt.step.column,
-          line: 1,
+          line: currentLine,
         };
       }
       if (
@@ -348,17 +374,18 @@ function checkBody(
           type: "SemanticError",
           message: `El inicio, fin y step del for deben ser numéricos`,
           column: stmt.init.column,
-          line: 1,
+          line: currentLine,
         };
       }
       const forCtx = { ...localCtx };
       forCtx[iter] = { type: "number", forIterator: true };
-      const res = checkBody(stmt.body, forCtx);
+      const res = checkBody(stmt.body, forCtx, currentLine + 1);
       if (res !== true) return res;
     }
   }
   return true;
 }
+
 
 const AnalizadorSemantico = (astBody: BodyStatement) => {
   return checkBody(astBody);

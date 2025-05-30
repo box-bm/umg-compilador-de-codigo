@@ -40,7 +40,7 @@ describe("AnalizadorSemantico", () => {
         type: "SemanticError",
         message: "Variable 'x' redeclarada",
         column: 8,
-        line: 1,
+        line: 2,
       };
       expect(AnalizadorSemantico(ast)).toEqual(error);
     });
@@ -89,7 +89,7 @@ describe("AnalizadorSemantico", () => {
         type: "SemanticError",
         message: "No se puede reasignar una constante",
         column: 4,
-        line: 1,
+        line: 2,
       };
       expect(AnalizadorSemantico(ast)).toEqual(error);
     });
@@ -630,7 +630,7 @@ describe("AnalizadorSemantico", () => {
         type: "SemanticError",
         message: "Variable 'x' no declarada",
         column: 2,
-        line: 1,
+        line: 2,
       };
       expect(AnalizadorSemantico(ast)).toEqual(error);
     });
@@ -669,7 +669,7 @@ describe("AnalizadorSemantico", () => {
         type: "SemanticError",
         message: "Variable 'i' redeclarada",
         column: 6,
-        line: 1,
+        line: 2,
       };
       expect(AnalizadorSemantico(ast)).toEqual(error);
     });
@@ -709,7 +709,7 @@ describe("AnalizadorSemantico", () => {
         type: "SemanticError",
         message: "No se puede reasignar el iterador del for",
         column: 6,
-        line: 1,
+        line: 2,
       };
       expect(AnalizadorSemantico(ast)).toEqual(error);
     });
