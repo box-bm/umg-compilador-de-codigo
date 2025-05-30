@@ -1,5 +1,9 @@
 {
+  
   "compilerOptions": {
+    "outDir": "./dist", // Directorio de salida para los archivos compilados.
+    "declaration": true, // Genera archivos de declaración .d.ts.
+    "declarationMap": true,
     "target": "es2016", // Define la versión de JavaScript emitida.
     "module": "ESNext", // Usa el sistema de módulos ES.
     "moduleResolution": "node", // Resolución de módulos estilo Node.js.
