@@ -130,12 +130,11 @@ function parseExpression(
       }
       const left = parseSide(tokens.slice(0, i));
       const right = parseSide(tokens.slice(i + 1));
-
       return {
-        type: "binary_expression",
-        operator: tokens[i].value,
-        left: left as Token | BinaryExpression | ComparisonExpression,
-        right: right as Token | BinaryExpression | ComparisonExpression,
+        type: "logical_operation",
+        operator: tokens[i].value as "&&" | "||",
+        left: left as Token | BinaryExpression | ComparisonExpression | LogicalOperation,
+        right: right as Token | BinaryExpression | ComparisonExpression | LogicalOperation,
       };
     }
   }
@@ -437,10 +436,44 @@ function parseBody(
           elseTokens[1].type === "keyword" &&
           elseTokens[1].value === "if"
         ) {
-          const elseIfNode = parseBody(tokenLines, next, next + 1);
-          if (isErrorDefinition(elseIfNode)) return elseIfNode;
-          elseIf = (elseIfNode as BodyStatement)[0] as IfStatement;
-          next++;
+          // Parsear el else if como un nuevo if_statement
+          const elseIfCondTokens = elseTokens.slice(2);
+          let elseIfCond = elseIfCondTokens;
+          if (
+            elseIfCond.length > 0 &&
+            elseIfCond[elseIfCond.length - 1].type === "punctuation" &&
+            elseIfCond[elseIfCond.length - 1].value === ":"
+          ) {
+            elseIfCond = elseIfCond.slice(0, -1);
+          }
+          const elseIfCondParsed = parseExpression(elseIfCond, next + 1);
+          if (isErrorDefinition(elseIfCondParsed)) return elseIfCondParsed;
+          if (
+            !isBodyNode(elseIfCondParsed) &&
+            elseIfCondParsed.type !== "identifier" &&
+            elseIfCondParsed.type !== "number" &&
+            elseIfCondParsed.type !== "boolean" &&
+            elseIfCondParsed.type !== "string"
+          )
+            return error("Expresión inválida", elseTokens[0]?.column ?? 0, next + 1);
+          const elseIfBodyStart = next + 1;
+          let elseIfBodyEnd = elseIfBodyStart;
+          while (
+            elseIfBodyEnd < end &&
+            !isIfLine(tokenLines[elseIfBodyEnd]) &&
+            !isElseLine(tokenLines[elseIfBodyEnd]) &&
+            !isForLine(tokenLines[elseIfBodyEnd]) &&
+            !isWhileLine(tokenLines[elseIfBodyEnd])
+          )
+            elseIfBodyEnd++;
+          const elseIfBody = parseBody(tokenLines, elseIfBodyStart, elseIfBodyEnd);
+          if (isErrorDefinition(elseIfBody)) return elseIfBody;
+          elseIf = {
+            type: "if_statement",
+            condition: elseIfCondParsed as Token | ComparisonExpression | LogicalOperation,
+            body: elseIfBody as BodyStatement,
+          };
+          next = elseIfBodyEnd;
         } else {
           const elseBodyStart = next + 1;
           let elseBodyEnd = elseBodyStart;

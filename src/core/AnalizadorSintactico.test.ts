@@ -656,7 +656,7 @@ describe("AnalizadorSintactico", () => {
       const result = AnalizadorSintactico(tokens);
       const expected: BodyStatement = [
         {
-          type: "binary_expression",
+          type: "logical_operation",
           operator: "&&",
           left: {
             type: "boolean",
@@ -685,7 +685,7 @@ describe("AnalizadorSintactico", () => {
       const result = AnalizadorSintactico(tokens);
       const expected: BodyStatement = [
         {
-          type: "binary_expression",
+          type: "logical_operation",
           operator: "||",
           left: {
             type: "boolean",
@@ -737,7 +737,7 @@ describe("AnalizadorSintactico", () => {
       const result = AnalizadorSintactico(tokens);
       const expected: BodyStatement = [
         {
-          type: "binary_expression",
+          type: "logical_operation",
           operator: "&&",
           left: {
             type: "identifier",
@@ -768,10 +768,10 @@ describe("AnalizadorSintactico", () => {
       const result = AnalizadorSintactico(tokens);
       const expected: BodyStatement = [
         {
-          type: "binary_expression",
+          type: "logical_operation",
           operator: "||",
           left: {
-            type: "binary_expression",
+            type: "logical_operation",
             operator: "&&",
             left: {
               type: "boolean",
@@ -808,7 +808,7 @@ describe("AnalizadorSintactico", () => {
       const result = AnalizadorSintactico(tokens);
       const expected: BodyStatement = [
         {
-          type: "binary_expression",
+          type: "logical_operation",
           operator: "&&",
           left: {
             type: "comparison_expression",
