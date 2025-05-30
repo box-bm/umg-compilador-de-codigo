@@ -403,7 +403,6 @@ function parseBody(
       ) {
         condTokens = condTokens.slice(0, -1);
       }
-      console.log("condTokens", condTokens);
       const cond = parseExpression(condTokens, i + 1);
       if (isErrorDefinition(cond)) return cond;
       if (
