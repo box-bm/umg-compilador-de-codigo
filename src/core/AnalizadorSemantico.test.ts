@@ -476,6 +476,55 @@ describe("AnalizadorSemantico", () => {
       ];
       expect(AnalizadorSemantico(ast)).toEqual(true);
     });
+
+    it("Deberia detectar que la condicion del while no puede ser un numero", () => {
+      const ast: BodyStatement = [
+        {
+          type: "while_statement",
+          condition: { type: "number", value: "10", column: 0 },
+          body: [],
+        },
+      ];
+      const error: ErrorDefinition = {
+        type: "SemanticError",
+        message: "La condición de while debe ser booleana",
+        column: 0,
+        line: 1,
+      };
+      expect(AnalizadorSemantico(ast)).toEqual(error);
+    });
+
+    it("Deberia detectar la condicion puede ser un operador logico", () => {
+      const ast: BodyStatement = [
+        {
+          type: "while_statement",
+          condition: {
+            type: "logical_operation",
+            operator: "&&",
+            left: { type: "boolean", value: "true", column: 0 },
+            right: { type: "boolean", value: "false", column: 5 },
+          },
+          body: [],
+        },
+      ];
+      expect(AnalizadorSemantico(ast)).toEqual(true);
+    });
+
+    it("Deberia detectar que la condicion puede ser un comparador", () => {
+      const ast: BodyStatement = [
+        {
+          type: "while_statement",
+          condition: {
+            type: "comparison_expression",
+            operator: "<",
+            left: { type: "number", value: "10", column: 0 },
+            right: { type: "number", value: "20", column: 4 },
+          },
+          body: [],
+        },
+      ];
+      expect(AnalizadorSemantico(ast)).toEqual(true);
+    });
   });
 
   describe("Print", () => {
@@ -824,6 +873,362 @@ describe("AnalizadorSemantico", () => {
         line: 2,
       };
       expect(AnalizadorSemantico(ast)).toEqual(error);
+    });
+  });
+
+  describe("Codigo real", () => {
+    it("Deberia permitir el caso de uso real de operaciones aritmeticas", () => {
+      const ast: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "x", column: 0 },
+          value: { type: "number", value: "10", column: 2 },
+        },
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "y", column: 4 },
+          value: { type: "number", value: "20", column: 6 },
+        },
+        {
+          type: "print_statement",
+          argument: {
+            type: "binary_expression",
+            operator: "+",
+            left: { type: "identifier", value: "x", column: 2 },
+            right: { type: "identifier", value: "y", column: 6 },
+          },
+        },
+      ];
+      expect(AnalizadorSemantico(ast)).toEqual(true);
+    });
+
+    it("Deberia permitir el caso de uso real de operacion logica AND", () => {
+      const ast: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "x", column: 0 },
+          value: { type: "boolean", value: "true", column: 2 },
+        },
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "y", column: 4 },
+          value: { type: "boolean", value: "false", column: 6 },
+        },
+        {
+          type: "print_statement",
+          argument: {
+            type: "logical_operation",
+            operator: "&&",
+            left: { type: "identifier", value: "x", column: 2 },
+            right: { type: "identifier", value: "y", column: 6 },
+          },
+        },
+      ];
+      expect(AnalizadorSemantico(ast)).toEqual(true);
+    });
+
+    it("Deberia permitir el caso de uso real de operacion logica OR", () => {
+      const ast: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "x", column: 0 },
+          value: { type: "boolean", value: "true", column: 2 },
+        },
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "y", column: 4 },
+          value: { type: "boolean", value: "false", column: 6 },
+        },
+        {
+          type: "print_statement",
+          argument: {
+            type: "logical_operation",
+            operator: "||",
+            left: { type: "identifier", value: "x", column: 2 },
+            right: { type: "identifier", value: "y", column: 6 },
+          },
+        },
+      ];
+      expect(AnalizadorSemantico(ast)).toEqual(true);
+    });
+
+    it("Deberia permitir el caso de uso real de una negacion", () => {
+      const ast: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "x", column: 0 },
+          value: { type: "boolean", value: "true", column: 2 },
+        },
+        {
+          type: "print_statement",
+          argument: {
+            type: "logical_operation",
+            operator: "!",
+            left: { type: "identifier", value: "x", column: 2 },
+          },
+        },
+      ];
+      expect(AnalizadorSemantico(ast)).toEqual(true);
+    });
+
+    it("Deberia permitir el caso de uso real de una condicion con comparadores y operaciones logicas", () => {
+      const ast: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "x", column: 0 },
+          value: { type: "number", value: "10", column: 2 },
+        },
+        {
+          type: "if_statement",
+          condition: {
+            type: "logical_operation",
+            operator: "&&",
+            left: {
+              type: "comparison_expression",
+              operator: "<",
+              left: { type: "identifier", value: "x", column: 0 },
+              right: { type: "number", value: "20", column: 4 },
+            },
+            right: {
+              type: "comparison_expression",
+              operator: ">",
+              left: { type: "identifier", value: "x", column: 0 },
+              right: { type: "number", value: "5", column: 8 },
+            },
+          },
+          body: [
+            {
+              type: "print_statement",
+              argument: {
+                type: "string",
+                value: '"x es mayor que 5 y menor que 20"',
+                column: 2,
+              },
+            },
+          ],
+        },
+        {
+          type: "print_statement",
+          argument: { type: "identifier", value: "x", column: 2 },
+        },
+      ];
+      expect(AnalizadorSemantico(ast)).toEqual(true);
+    });
+
+    it("Deberia permitir el caso de uso real de una condicion con comparadores y operaciones logicas anidadas", () => {
+      const ast: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "x", column: 0 },
+          value: { type: "number", value: "10", column: 2 },
+        },
+        {
+          type: "if_statement",
+          condition: {
+            type: "logical_operation",
+            operator: "&&",
+            left: {
+              type: "comparison_expression",
+              operator: "<",
+              left: { type: "identifier", value: "x", column: 0 },
+              right: { type: "number", value: "5", column: 4 },
+            },
+            right: {
+              type: "logical_operation",
+              operator: "||",
+              left: {
+                type: "comparison_expression",
+                operator: ">",
+                left: { type: "identifier", value: "x", column: 0 },
+                right: { type: "number", value: "15", column: 8 },
+              },
+              right: {
+                type: "comparison_expression",
+                operator: "==",
+                left: { type: "identifier", value: "x", column: 0 },
+                right: { type: "number", value: "10", column: 12 },
+              },
+            },
+          },
+          body: [
+            {
+              type: "print_statement",
+              argument: {
+                type: "string",
+                value: '"x es menor que 5 o mayor que 15 o igual a 10"',
+                column: 2,
+              },
+            },
+          ],
+        },
+      ];
+      expect(AnalizadorSemantico(ast)).toEqual(true);
+    });
+
+    it("Deberia permitir el caso de uso real de if", () => {
+      const ast: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "x", column: 0 },
+          value: { type: "number", value: "10", column: 2 },
+        },
+        {
+          type: "if_statement",
+          condition: {
+            type: "comparison_expression",
+            operator: "<",
+            left: { type: "identifier", value: "x", column: 0 },
+            right: { type: "number", value: "20", column: 4 },
+          },
+          body: [
+            {
+              type: "print_statement",
+              argument: {
+                type: "string",
+                value: '"x es menor que 20"',
+                column: 2,
+              },
+            },
+          ],
+          elseIf: {
+            type: "if_statement",
+            condition: {
+              type: "comparison_expression",
+              operator: ">",
+              left: { type: "identifier", value: "x", column: 0 },
+              right: { type: "number", value: "20", column: 4 },
+            },
+            body: [
+              {
+                type: "print_statement",
+                argument: {
+                  type: "string",
+                  value: '"x es mayor que 20"',
+                  column: 2,
+                },
+              },
+            ],
+          },
+          elseBody: [
+            {
+              type: "print_statement",
+              argument: {
+                type: "string",
+                value: '"x es igual a 20"',
+                column: 2,
+              },
+            },
+          ],
+        },
+        {
+          type: "print_statement",
+          argument: { type: "identifier", value: "x", column: 2 },
+        },
+      ];
+      expect(AnalizadorSemantico(ast)).toEqual(true);
+    });
+
+    it("Deberia permitir el caso de uso real if aniadado", () => {
+      const ast: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "x", column: 0 },
+          value: { type: "number", value: "10", column: 2 },
+        },
+        {
+          type: "if_statement",
+          condition: {
+            type: "comparison_expression",
+            operator: "<",
+            left: { type: "identifier", value: "x", column: 0 },
+            right: { type: "number", value: "20", column: 4 },
+          },
+          body: [
+            {
+              type: "if_statement",
+              condition: {
+                type: "comparison_expression",
+                operator: "<",
+                left: { type: "identifier", value: "x", column: 0 },
+                right: { type: "number", value: "15", column: 6 },
+              },
+              body: [
+                {
+                  type: "print_statement",
+                  argument: {
+                    type: "string",
+                    value: '"x es menor que 15"',
+                    column: 2,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ];
+      expect(AnalizadorSemantico(ast)).toEqual(true);
+    });
+
+    it("Debería permitir caso de uso real de while", () => {
+      const ast: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "x", column: 0 },
+          value: { type: "number", value: "10", column: 2 },
+        },
+        {
+          type: "while_statement",
+          condition: {
+            type: "comparison_expression",
+            operator: "<",
+            left: { type: "identifier", value: "x", column: 0 },
+            right: { type: "number", value: "10", column: 4 },
+          },
+          body: [
+            {
+              type: "assignment",
+              variable: { type: "identifier", value: "x", column: 2 },
+              value: {
+                type: "binary_expression",
+                operator: "+",
+                left: { type: "identifier", value: "x", column: 4 },
+                right: { type: "number", value: "1", column: 6 },
+              },
+            },
+            {
+              type: "print_statement",
+              argument: { type: "identifier", value: "x", column: 2 },
+            },
+          ],
+        },
+      ];
+      expect(AnalizadorSemantico(ast)).toEqual(true);
+    });
+
+    it("Deberia permitir caso de uso ciclo for", () => {
+      const ast: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "saludo", column: 0 },
+          value: { type: "string", value: '"Hola"', column: 2 },
+        },
+        {
+          type: "for_statement",
+          iterator: {
+            type: "new_variable_declaration",
+            variable: { type: "identifier", value: "i", column: 4 },
+          },
+          init: { type: "number", value: "0", column: 8 },
+          end: { type: "number", value: "5", column: 11 },
+          body: [
+            {
+              type: "print_statement",
+              argument: { type: "identifier", value: "saludo", column: 2 },
+            },
+          ],
+        },
+      ];
+      expect(AnalizadorSemantico(ast)).toEqual(true);
     });
   });
 });

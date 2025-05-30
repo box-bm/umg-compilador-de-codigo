@@ -20,10 +20,10 @@ export interface LogicalOperation extends ASTNode {
   /**
    * The left operand of the logical operation, which can be null.
    */
-  left: Token | BinaryExpression | ComparisonExpression | null;
+  left: Token | BinaryExpression | ComparisonExpression | LogicalOperation | null;
 
   /**
    * The right operand of the logical operation, which can be a token or a binary expression.
    */
-  right?: Token | BinaryExpression | ComparisonExpression;
+  right?: Token | BinaryExpression | ComparisonExpression | LogicalOperation;
 }
