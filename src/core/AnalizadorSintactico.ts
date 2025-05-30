@@ -333,7 +333,7 @@ function parseBody(
         continue;
       }
       // let/const x = valor
-      if (tokens.length === 4) {
+      if (tokens.length >= 4 && tokens[2].type === "operator" && tokens[2].value === "=") {
         if (tokens[1].type !== "identifier") {
           return error(
             `La variable${tokens[0].value === "const" ? " constante" : ""} no tiene nombre`,
@@ -348,16 +348,29 @@ function parseBody(
             i + 1
           );
         }
-        const value = tokens[3];
-        if (value.type === "unknown")
-          return error("Token desconocido", value.column, i + 1);
-        if (value.type === "keyword")
-          return error("No se puede asignar un keyword", value.column, i + 1);
-        body.push({
-          type: "new_variable_declaration_assignment",
-          variable: tokens[1],
-          value,
-        });
+        const valueTokens = tokens.slice(3);
+        if (valueTokens.length === 0) {
+          return error(
+            `Falta el valor de la variable${tokens[0].value === "const" ? " constante" : ""}`,
+            tokens[2].column,
+            i + 1
+          );
+        }
+        const value = parseExpression(valueTokens, i + 1);
+        if (isErrorDefinition(value)) return value;
+        if (tokens[0].value === "const") {
+          body.push({
+            type: "constant_variable_declaration",
+            variable: tokens[1],
+            value: value as Token | BinaryExpression | LogicalOperation | ComparisonExpression,
+          });
+        } else {
+          body.push({
+            type: "new_variable_declaration_assignment",
+            variable: tokens[1],
+            value: value as Token | BinaryExpression | LogicalOperation | ComparisonExpression,
+          });
+        }
         i++;
         continue;
       }

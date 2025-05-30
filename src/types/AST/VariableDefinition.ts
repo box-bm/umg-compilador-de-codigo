@@ -1,6 +1,8 @@
 import { ASTNode } from "./ASTNode";
 import { BinaryExpression } from "./BinaryExpression";
 import Token from "../Token";
+import { LogicalOperation } from "./LogicalExpression";
+import { ComparisonExpression } from "./ComparisonExpression";
 
 /**
  * Represents a variable declaration in the AST.
@@ -29,12 +31,12 @@ export interface ConstantVariableDeclaration extends ASTNode {
   /**
    * The token representing the constant variable being declared.
    */
-  variable: Token;
+  variable: Token 
 
   /**
    * The token representing the value assigned to the constant variable.
    */
-  value: Token;
+  value: Token | BinaryExpression | LogicalOperation | ComparisonExpression;
 }
 
 /**
@@ -54,5 +56,5 @@ export interface Assignment extends ASTNode {
   /**
    * The value being assigned, which can be a token, an array literal, an object literal, or a binary expression.
    */
-  value: Token | BinaryExpression;
+  value: Token | BinaryExpression | LogicalOperation | ComparisonExpression;
 }

@@ -129,7 +129,7 @@ describe("AnalizadorSintactico", () => {
       const result = AnalizadorSintactico(tokens);
       const expected: BodyStatement = [
         {
-          type: "new_variable_declaration_assignment",
+          type: "constant_variable_declaration",
           variable: {
             type: "identifier",
             value: "x",
@@ -139,6 +139,246 @@ describe("AnalizadorSintactico", () => {
             column: 10,
             type: "number",
             value: "10",
+          },
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+
+    it("Deberia parsear una variable de operador logico", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "let", column: 0 },
+          { type: "identifier", value: "x", column: 4 },
+          { type: "operator", value: "=", column: 6 },
+          { type: "boolean", value: "true", column: 8 },
+          { type: "operator", value: "&&", column: 12 },
+          { type: "boolean", value: "false", column: 15 },
+        ],
+      ];
+
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: {
+            type: "identifier",
+            value: "x",
+            column: 4,
+          },
+          value: {
+            type: "logical_operation",
+            operator: "&&",
+            left: {
+              type: "boolean",
+              value: "true",
+              column: 8,
+            },
+            right: {
+              type: "boolean",
+              value: "false",
+              column: 15,
+            },
+          },
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+
+    it("Deberia parsear una variable de operador de comparacion", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "let", column: 0 },
+          { type: "identifier", value: "x", column: 4 },
+          { type: "operator", value: "=", column: 6 },
+          { type: "number", value: "10", column: 8 },
+          { type: "operator", value: "<", column: 10 },
+          { type: "number", value: "20", column: 12 },
+        ],
+      ];
+
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: {
+            type: "identifier",
+            value: "x",
+            column: 4,
+          },
+          value: {
+            type: "comparison_expression",
+            operator: "<",
+            left: {
+              type: "number",
+              value: "10",
+              column: 8,
+            },
+            right: {
+              type: "number",
+              value: "20",
+              column: 12,
+            },
+          },
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+
+    it("Deberia parsear una variable de operador aritmetico", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "let", column: 0 },
+          { type: "identifier", value: "x", column: 4 },
+          { type: "operator", value: "=", column: 6 },
+          { type: "number", value: "10", column: 8 },
+          { type: "operator", value: "+", column: 10 },
+          { type: "number", value: "5", column: 12 },
+        ],
+      ];
+
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: {
+            type: "identifier",
+            value: "x",
+            column: 4,
+          },
+          value: {
+            type: "binary_expression",
+            operator: "+",
+            left: {
+              type: "number",
+              value: "10",
+              column: 8,
+            },
+            right: {
+              type: "number",
+              value: "5",
+              column: 12,
+            },
+          },
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+
+    it("Deberia parsear una constante con un operador aritmetico", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "const", column: 0 },
+          { type: "identifier", value: "x", column: 6 },
+          { type: "operator", value: "=", column: 8 },
+          { type: "number", value: "10", column: 10 },
+          { type: "operator", value: "+", column: 12 },
+          { type: "number", value: "5", column: 14 },
+        ],
+      ];
+
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "constant_variable_declaration",
+          variable: {
+            type: "identifier",
+            value: "x",
+            column: 6,
+          },
+          value: {
+            type: "binary_expression",
+            operator: "+",
+            left: {
+              type: "number",
+              value: "10",
+              column: 10,
+            },
+            right: {
+              type: "number",
+              value: "5",
+              column: 14,
+            },
+          },
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+
+    it("Deberia parsear una constante con un operador de comparacion", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "const", column: 0 },
+          { type: "identifier", value: "x", column: 6 },
+          { type: "operator", value: "=", column: 8 },
+          { type: "number", value: "10", column: 10 },
+          { type: "operator", value: "<", column: 12 },
+          { type: "number", value: "20", column: 14 },
+        ],
+      ];
+
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "constant_variable_declaration",
+          variable: {
+            type: "identifier",
+            value: "x",
+            column: 6,
+          },
+          value: {
+            type: "comparison_expression",
+            operator: "<",
+            left: {
+              type: "number",
+              value: "10",
+              column: 10,
+            },
+            right: {
+              type: "number",
+              value: "20",
+              column: 14,
+            },
+          },
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+
+    it("Deberia parsear una constante con un operador logico", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "const", column: 0 },
+          { type: "identifier", value: "x", column: 6 },
+          { type: "operator", value: "=", column: 8 },
+          { type: "boolean", value: "true", column: 10 },
+          { type: "operator", value: "&&", column: 14 },
+          { type: "boolean", value: "false", column: 17 },
+        ],
+      ];
+
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "constant_variable_declaration",
+          variable: {
+            type: "identifier",
+            value: "x",
+            column: 6,
+          },
+          value: {
+            type: "logical_operation",
+            operator: "&&",
+            left: {
+              type: "boolean",
+              value: "true",
+              column: 10,
+            },
+            right: {
+              type: "boolean",
+              value: "false",
+              column: 17,
+            },
           },
         },
       ];
@@ -176,7 +416,7 @@ describe("AnalizadorSintactico", () => {
 
         const error: ErrorDefinition = {
           type: "SyntaxError",
-          message: "Token desconocido",
+          message: "No se puede usar un token desconocido",
           column: 8,
           line: 1,
         };
@@ -196,7 +436,7 @@ describe("AnalizadorSintactico", () => {
 
         const error: ErrorDefinition = {
           type: "SyntaxError",
-          message: "No se puede asignar un keyword",
+          message: "No se puede usar un keyword como operando",
           column: 8,
           line: 1,
         };
