@@ -130,6 +130,23 @@ describe("AnalizadorSemantico", () => {
   });
 
   describe("Operadores Aritmeticos", () => {
+    it("Deberia permitir concatenacion de textos y numeros", () => {
+      const ast: BodyStatement = [
+        {
+          type: "binary_expression",
+          operator: "+",
+          left: {
+            type: "binary_expression",
+            operator: "+",
+            left: { type: "string", value: '"Hola"', column: 0 },
+            right: { type: "number", value: "10", column: 7 },
+          },
+          right: { type: "string", value: '" Mundo"', column: 10 },
+        },
+      ];
+      expect(AnalizadorSemantico(ast)).toEqual(true);
+    });
+
     it("Debería detectar operación entre tipos incompatibles", () => {
       const ast: BodyStatement = [
         {

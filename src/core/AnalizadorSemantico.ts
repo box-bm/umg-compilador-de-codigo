@@ -42,6 +42,18 @@ function getType(
     if (typeof l === "object") return l;
     let r = getType(be.right, ctx);
     if (typeof r === "object") return r;
+    // Permitir concatenación de string y number con +
+    if (be.operator === "+") {
+      if ((l === "string" && r === "number") || (l === "number" && r === "string")) {
+        return "string";
+      }
+      if (l === "string" && r === "string") {
+        return "string";
+      }
+      if (l === "number" && r === "number") {
+        return "number";
+      }
+    }
     // Si uno es unknown y el otro es number o string, inferir el tipo
     if (l === "unknown" && (r === "number" || r === "string")) {
       l = getType(be.left, ctx, r);
