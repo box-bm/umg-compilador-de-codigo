@@ -1,5 +1,5 @@
-import { ASTNode } from "./ASTNode";
-import Token from "../Token";
+import type { ASTNode } from "./ASTNode";
+import type { Token } from "../Token";
 
 /**
  * Represents a comparison expression in the AST.

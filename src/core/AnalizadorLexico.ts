@@ -1,5 +1,5 @@
-import Token from "../types/Token";
-import TokenType from "../types/TokenType";
+import type { Token } from "../types/Token";
+import type { TokenType } from "../types/TokenType";
 
 const tableMatch: {
   regex: RegExp;

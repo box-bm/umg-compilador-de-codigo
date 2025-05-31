@@ -27,4 +27,4 @@ type TokenType =
   | "unknown"
   | "boolean";
 
-export default TokenType;
+export type { TokenType };

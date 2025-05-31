@@ -1,16 +1,16 @@
-import { BinaryExpression } from "./BinaryExpression";
-import { ComparisonExpression } from "./ComparisonExpression";
-import { ForStatement } from "./ForStatement";
-import { IfStatement } from "./IfStatement";
-import { LogicalOperation } from "./LogicalExpression";
-import { PrintStatement } from "./PrintStatement";
+import type { BinaryExpression } from "./BinaryExpression";
+import type { ComparisonExpression } from "./ComparisonExpression";
+import type { ForStatement } from "./ForStatement";
+import type { IfStatement } from "./IfStatement";
+import type { LogicalOperation } from "./LogicalExpression";
+import type { PrintStatement } from "./PrintStatement";
 
-import {
+import type {
   Assignment,
   ConstantVariableDeclaration,
   VariableDeclaration,
 } from "./VariableDefinition";
-import { WhileStatement } from "./WhileStatement";
+import type { WhileStatement } from "./WhileStatement";
 
 /**
  * Represents the body of a statement in the Abstract Syntax Tree (AST).

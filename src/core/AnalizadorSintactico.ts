@@ -1,4 +1,4 @@
-import {
+import type {
   BodyStatement,
   ErrorDefinition,
   IfStatement,
@@ -6,7 +6,7 @@ import {
   LogicalOperation,
   ComparisonExpression,
 } from "../types/AST";
-import Token from "../types/Token";
+import type { Token } from "../types/Token";
 
 const LOGICAL_OPS = ["&&", "||"];
 const COMPARISON_OPS = ["<", ">", "<=", ">=", "==", "!="];
@@ -133,12 +133,20 @@ function parseExpression(
       return {
         type: "logical_operation",
         operator: tokens[i].value as "&&" | "||",
-        left: left as Token | BinaryExpression | ComparisonExpression | LogicalOperation,
-        right: right as Token | BinaryExpression | ComparisonExpression | LogicalOperation,
+        left: left as
+          | Token
+          | BinaryExpression
+          | ComparisonExpression
+          | LogicalOperation,
+        right: right as
+          | Token
+          | BinaryExpression
+          | ComparisonExpression
+          | LogicalOperation,
       };
     }
   }
-  
+
   for (let i = 0; i < tokens.length; i++) {
     if (
       tokens[i].type === "operator" &&
@@ -313,7 +321,9 @@ function parseBody(
       if (tokens.length === 2) {
         if (tokens[1].type !== "identifier") {
           return error(
-            `La variable${tokens[0].value === "const" ? " constante" : ""} no tiene nombre`,
+            `La variable${
+              tokens[0].value === "const" ? " constante" : ""
+            } no tiene nombre`,
             tokens[1]?.column ?? tokens[0].column,
             i + 1
           );
@@ -333,17 +343,25 @@ function parseBody(
         continue;
       }
       // let/const x = valor
-      if (tokens.length >= 4 && tokens[2].type === "operator" && tokens[2].value === "=") {
+      if (
+        tokens.length >= 4 &&
+        tokens[2].type === "operator" &&
+        tokens[2].value === "="
+      ) {
         if (tokens[1].type !== "identifier") {
           return error(
-            `La variable${tokens[0].value === "const" ? " constante" : ""} no tiene nombre`,
+            `La variable${
+              tokens[0].value === "const" ? " constante" : ""
+            } no tiene nombre`,
             tokens[1]?.column ?? tokens[0].column,
             i + 1
           );
         }
         if (tokens[2].type !== "operator" || tokens[2].value !== "=") {
           return error(
-            `Falta el signo igual en variables${tokens[0].value === "const" ? " constantes" : ""}`,
+            `Falta el signo igual en variables${
+              tokens[0].value === "const" ? " constantes" : ""
+            }`,
             tokens[2]?.column ?? tokens[1].column,
             i + 1
           );
@@ -351,7 +369,9 @@ function parseBody(
         const valueTokens = tokens.slice(3);
         if (valueTokens.length === 0) {
           return error(
-            `Falta el valor de la variable${tokens[0].value === "const" ? " constante" : ""}`,
+            `Falta el valor de la variable${
+              tokens[0].value === "const" ? " constante" : ""
+            }`,
             tokens[2].column,
             i + 1
           );
@@ -362,13 +382,21 @@ function parseBody(
           body.push({
             type: "constant_variable_declaration",
             variable: tokens[1],
-            value: value as Token | BinaryExpression | LogicalOperation | ComparisonExpression,
+            value: value as
+              | Token
+              | BinaryExpression
+              | LogicalOperation
+              | ComparisonExpression,
           });
         } else {
           body.push({
             type: "new_variable_declaration_assignment",
             variable: tokens[1],
-            value: value as Token | BinaryExpression | LogicalOperation | ComparisonExpression,
+            value: value as
+              | Token
+              | BinaryExpression
+              | LogicalOperation
+              | ComparisonExpression,
           });
         }
         i++;
@@ -378,20 +406,26 @@ function parseBody(
       if (tokens.length === 3) {
         if (tokens[1].type !== "identifier") {
           return error(
-            `La variable${tokens[0].value === "const" ? " constante" : ""} no tiene nombre`,
+            `La variable${
+              tokens[0].value === "const" ? " constante" : ""
+            } no tiene nombre`,
             tokens[1]?.column ?? tokens[0].column,
             i + 1
           );
         }
         if (tokens[2].type === "operator" && tokens[2].value === "=") {
           return error(
-            `Falta el valor de la variable${tokens[0].value === "const" ? " constante" : ""}`,
+            `Falta el valor de la variable${
+              tokens[0].value === "const" ? " constante" : ""
+            }`,
             tokens[2].column,
             i + 1
           );
         }
         return error(
-          `Falta el signo igual en variables${tokens[0].value === "const" ? " constantes" : ""}`,
+          `Falta el signo igual en variables${
+            tokens[0].value === "const" ? " constantes" : ""
+          }`,
           tokens[2]?.column ?? tokens[1].column,
           i + 1
         );
@@ -399,7 +433,9 @@ function parseBody(
       // let/const sin nombre
       if (tokens.length === 1) {
         return error(
-          `La variable${tokens[0].value === "const" ? " constante" : ""} no tiene nombre`,
+          `La variable${
+            tokens[0].value === "const" ? " constante" : ""
+          } no tiene nombre`,
           tokens[0].column,
           i + 1
         );
@@ -493,7 +529,11 @@ function parseBody(
             elseIfCondParsed.type !== "boolean" &&
             elseIfCondParsed.type !== "string"
           )
-            return error("Expresión inválida", elseTokens[0]?.column ?? 0, next + 1);
+            return error(
+              "Expresión inválida",
+              elseTokens[0]?.column ?? 0,
+              next + 1
+            );
           const elseIfBodyStart = next + 1;
           let elseIfBodyEnd = elseIfBodyStart;
           while (
@@ -504,11 +544,18 @@ function parseBody(
             !isWhileLine(tokenLines[elseIfBodyEnd])
           )
             elseIfBodyEnd++;
-          const elseIfBody = parseBody(tokenLines, elseIfBodyStart, elseIfBodyEnd);
+          const elseIfBody = parseBody(
+            tokenLines,
+            elseIfBodyStart,
+            elseIfBodyEnd
+          );
           if (isErrorDefinition(elseIfBody)) return elseIfBody;
           elseIf = {
             type: "if_statement",
-            condition: elseIfCondParsed as Token | ComparisonExpression | LogicalOperation,
+            condition: elseIfCondParsed as
+              | Token
+              | ComparisonExpression
+              | LogicalOperation,
             body: elseIfBody as BodyStatement,
           };
           next = elseIfBodyEnd;

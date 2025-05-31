@@ -1,4 +1,4 @@
-import TokenType from "./TokenType";
+import type { TokenType } from "./TokenType";
 
 /**
  * Represents a token in the source code, typically used in lexical analysis.
@@ -21,4 +21,4 @@ interface Token {
   column: number;
 }
 
-export default Token;
+export type { Token };

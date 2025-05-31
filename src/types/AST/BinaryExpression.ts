@@ -1,6 +1,6 @@
-import { ASTNode } from "./ASTNode";
-import Token from "../Token";
-import { ComparisonExpression } from "./ComparisonExpression";
+import type { ASTNode } from "./ASTNode";
+import type { Token } from "../Token";
+import type { ComparisonExpression } from "./ComparisonExpression";
 
 type Side = Token | BinaryExpression | ComparisonExpression;
 

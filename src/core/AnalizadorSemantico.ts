@@ -1,6 +1,6 @@
-import { BodyStatement } from "../types/AST";
-import { ErrorDefinition } from "../types/AST/ErrorDefinition";
-import Token from "../types/Token";
+import type { BodyStatement } from "../types/AST";
+import type { ErrorDefinition } from "../types/AST/ErrorDefinition";
+import type { Token } from "../types/Token";
 import type { BinaryExpression } from "../types/AST/BinaryExpression";
 import type { ComparisonExpression } from "../types/AST/ComparisonExpression";
 import type { LogicalOperation } from "../types/AST/LogicalExpression";

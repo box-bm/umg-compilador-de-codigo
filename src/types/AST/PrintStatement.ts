@@ -1,8 +1,8 @@
-import Token from "../Token";
-import { ASTNode } from "./ASTNode";
-import { BinaryExpression } from "./BinaryExpression";
-import { ComparisonExpression } from "./ComparisonExpression";
-import { LogicalOperation } from "./LogicalExpression";
+import type { Token } from "../Token";
+import type { ASTNode } from "./ASTNode";
+import type { BinaryExpression } from "./BinaryExpression";
+import type { ComparisonExpression } from "./ComparisonExpression";
+import type { LogicalOperation } from "./LogicalExpression";
 
 type Expression =
   | Token

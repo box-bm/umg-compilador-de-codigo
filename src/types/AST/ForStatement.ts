@@ -1,7 +1,7 @@
-import Token from "../Token";
-import { ASTNode } from "./ASTNode";
-import { BodyStatement } from "./BodyStatement";
-import { VariableDeclaration } from "./VariableDefinition";
+import type { Token } from "../Token";
+import type { ASTNode } from "./ASTNode";
+import type { BodyStatement } from "./BodyStatement";
+import type { VariableDeclaration } from "./VariableDefinition";
 
 export interface ForStatement extends ASTNode {
   /**
