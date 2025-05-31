@@ -9,6 +9,7 @@
   --naranja_medio: #f45e01;
   --celeste: #65b5f6;
   --celeste_dos:#7a9bc8;
+  --rojo_intermedio:#CD0074;
 }
 /*Estilos base*/
 
@@ -33,7 +34,7 @@ main {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-  border: 1px solid yellow;
+  /* border: 1px solid yellow; */
 }
 
 
@@ -161,6 +162,8 @@ header .header__text {
   align-items: center;
   gap: 24px;
   margin-bottom: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .compile-btn {
@@ -215,7 +218,7 @@ header .header__text {
 
 .output-label {
   color: #61dafb;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   margin-bottom: 16px;
   letter-spacing: 1px;
 }
@@ -228,7 +231,8 @@ header .header__text {
 }
 
 #output-lexico,
-#output-sintactico {
+#output-sintactico,
+#output-codigo {
   background: #1e2127;
   border-radius: 4px;
   padding: 10px 14px;
@@ -296,7 +300,7 @@ header .header__text {
 .glass-table {
 
   width: 75%;
-  min-width: 310px;
+  min-width: 280px;
   border-collapse: separate;
   border-spacing: 0;
   background: none;
@@ -332,19 +336,19 @@ header .header__text {
 
 
 .json-key {
-  color: #d63384;
+  color: var(--amarillo_alto);
 }
 
 .json-string {
-  color: #20c997;
+  color: var(--celeste);
 }
 
 .json-number {
-  color: #fd7e14;
+  color: var(--azul_claro);
 }
 
 .json-boolean {
-  color: #0d6efd;
+  color: var(--rojo_intermedio);
 }
 
 .json-null {
@@ -354,18 +358,3 @@ header .header__text {
 
 
 
-
-/* Responsive */
-@media (max-width: 700px) {
-  .container {
-    padding: 12px 2vw;
-  }
-  .controls {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-  .output-section {
-    padding: 10px 4px;
-  }
-}
