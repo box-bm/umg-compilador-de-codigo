@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Compilador de codigo</title>
+    <script type="module" crossorigin src="/assets/index-DvMxZKWE.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D8kWKy5x.css">
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Compilador</h1>
+      </header>
+
+      <div class="editor-container">
+        <div class="editor-box">
+          <div class="editor-label">Editor</div>
+          <textarea
+            id="editor"
+            class="editor"
+            placeholder="Agrega tu codigo aqui o sube un archivo..."
+          ></textarea>
+        </div>
+        <div class="controls">
+          <button id="compile-btn" class="compile-btn">Compilar</button>
+          <div class="file-upload">
+            <div class="file-upload-label">Subir archivo:</div>
+            <input type="file" id="file-upload" accept="text/plain" />
+          </div>
+        </div>
+      </div>
+
+      <section class="output-section">
+        <h1 class="output-label">Resultados de la compilación</h1>
+        <div class="error-container" id="error-container">
+          <div class="error-label">Errores</div>
+          <div id="error-box" class="error-box"></div>
+        </div>
+        <div>
+          <h2>Tokens</h2>
+          <div id="output-lexico"></div>
+        </div>
+        <div>
+          <h2>Árbol Sintáctico</h2>
+          <div id="output-sintactico"></div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
