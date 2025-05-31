@@ -24,8 +24,8 @@ const Compilador = (lineas: string[]): void => {
   }
   console.log("Tokens Generados:", tokens);
 
-  outputLexico.innerHTML = `
-    <table border="1" cellpadding="4" cellspacing="0">
+  outputLexico.innerHTML = /*html */ `
+    <table  border="1" cellpadding="4" cellspacing="0" class="glass-table">
       <thead>
         <tr>
           <th>Línea</th>

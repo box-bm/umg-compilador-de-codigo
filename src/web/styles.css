@@ -238,6 +238,8 @@ header .header__text {
   margin-bottom: 10px;
   white-space: pre-wrap;
   box-shadow: 0 1px 4px #0002 inset;
+  display: flex;
+  justify-content: center;
 }
 
 /* Compilation success message */
@@ -289,6 +291,69 @@ header .header__text {
 #compilation-success.active {
   display: block;
 }
+
+/*table*/
+.glass-table {
+
+  width: 75%;
+  min-width: 310px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: none;
+  backdrop-filter: blur(10px);
+  
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-table th {
+  background: none;
+  color: var(--amarillo_alto);
+  padding: 0.5rem 0.8rem ;
+  text-align: left;
+  font-weight: 500;
+
+}
+
+.glass-table td {
+  padding: 0.5rem 0.8rem ;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.glass-table tr:hover td {
+  background: rgba(0, 120, 255, 0.1);
+  color: white;
+}
+
+
+/*JSON*/
+
+
+.json-key {
+  color: #d63384;
+}
+
+.json-string {
+  color: #20c997;
+}
+
+.json-number {
+  color: #fd7e14;
+}
+
+.json-boolean {
+  color: #0d6efd;
+}
+
+.json-null {
+  color: #6c757d;
+}
+
+
+
+
 
 /* Responsive */
 @media (max-width: 700px) {
