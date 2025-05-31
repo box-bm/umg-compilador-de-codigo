@@ -31,16 +31,16 @@ let division = a / b
 ```plaintext
 let x = 10
 let y = 5
-
-if x > 5 && y < 10:
-    print "Ambas condiciones son verdaderas"
-
-if x > 5 || y > 10:
-    print "Al menos una condición es verdadera"
-
 let flag = false
 
-if !flag:
+if x > 5 && y < 10 :
+    print "Ambas condiciones son verdaderas"
+
+if x > 5 || y > 10 :
+    print "Al menos una condición es verdadera"
+
+
+if !flag :
     print "La condición se invirtió"
 ```
 
@@ -49,23 +49,23 @@ if !flag:
 ```plaintext
 let a = 10
 let b = 5
-let igual = a == b       // Igualdad
-let diferente = a != b   // Diferente
-let mayor = a > b       // Mayor que
-let menor = a < b       // Menor que
-let mayor_igual = a >= b // Mayor o igual que
-let menor_igual = a <= b // Menor o igual que
+let igual = a == b      
+let diferente = a != b  
+let mayor = a > b       
+let menor = a < b       
+let mayor_igual = a >= b
+let menor_igual = a <= b
 ```
 
 ## **📌 Estructuras de control (`if`, `else`)**
 
 ```plaintext
-x = 10
+let x = 10
 
-if x > 5:
+if x > 5 :
     print "x es mayor que 5"
 else if x < 5 && x > 0 :
-    print "x es mayor a 0 y menor a 5
+    print "x es mayor a 0 y menor a 5"
 else:
     print "x es menor o igual a 5"
 ```
@@ -76,51 +76,29 @@ else:
 // Ciclo while
 let x = 3
 
-while x > 0:
+while x > 0 :
     print x
     x = x - 1
-
-// Ciclo do while (ejecuta al menos una vez)
-let y = 5
-
-do:
-    print y
-    y = y - 1
-while y > 0
 ```
 
 ## **📌 Ciclo `for`**
 
 ```plaintext
-// Iteración básica
-for i = 1 to 5:
+# Iteración básica
+for i = 1 to 5 :
     print i
 
-// Con paso personalizado
-for i = 0 to 10 step 2:
+# Con paso personalizado
+for i = 0 to 10 step 2 :
     print i
-```
-
-## **📌 Switch y Case**
-
-```plaintext
-let opcion = 2
-
-switch opcion:
-    case 1:
-        print "Elegiste opción 1"
-    case 2:
-        print "Elegiste opción 2"
-    case 3:
-        print "Elegiste opción 3"
-    default:
-        print "Opción no válida"
 ```
 
 ## **📌 Manejo de indentación en bloques**
 
 ```plaintext
-if x > 3:
+let x = 0
+
+if x > 3 :
     print "x es mayor que 3"
     let y = x * 2
     print y
