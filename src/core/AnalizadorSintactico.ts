@@ -449,16 +449,16 @@ function parseBody(
     }
     // Assignment
     if (
-      tokens.length === 3 &&
+      tokens.length >= 3 &&
       tokens[0].type === "identifier" &&
       tokens[1].type === "operator" &&
       tokens[1].value === "="
     ) {
-      const value = tokens[2];
-      if (value.type === "unknown")
-        return error("Token desconocido", value.column, i + 1);
-      if (value.type === "keyword")
-        return error("No se puede asignar un keyword", value.column, i + 1);
+      const valueTokens = tokens.slice(2);
+      if (valueTokens.length === 0)
+        return error("Falta valor en la asignación", tokens[1].column, i + 1);
+      const value = parseExpression(valueTokens, i + 1);
+      if (isErrorDefinition(value)) return value;
       body.push({
         type: "assignment",
         variable: tokens[0],

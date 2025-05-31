@@ -385,6 +385,155 @@ describe("AnalizadorSintactico", () => {
       expect(result).toEqual(expected);
     });
 
+    it("Deberia parsear una variable asignada de otra variable", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "let", column: 0 },
+          { type: "identifier", value: "x", column: 4 },
+          { type: "operator", value: "=", column: 6 },
+          { type: "identifier", value: "y", column: 8 },
+        ],
+      ];
+
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: {
+            type: "identifier",
+            value: "x",
+            column: 4,
+          },
+          value: {
+            type: "identifier",
+            value: "y",
+            column: 8,
+          },
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+
+    it("Deberia parsear un identificador con una operacion aritmetica con identificador", () => {
+      const tokens: Token[][] = [
+        [
+          {
+            type: "identifier",
+            value: "suma",
+            column: 0,
+          },
+          {
+            type: "operator",
+            value: "=",
+            column: 5,
+          },
+          {
+            type: "identifier",
+            value: "suma",
+            column: 7,
+          },
+          {
+            type: "operator",
+            value: "+",
+            column: 12,
+          },
+          {
+            type: "number",
+            value: "5",
+            column: 14,
+          },
+        ],
+      ];
+
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "assignment",
+          variable: {
+            type: "identifier",
+            value: "suma",
+            column: 0,
+          },
+          value: {
+            type: "binary_expression",
+            operator: "+",
+            left: {
+              type: "identifier",
+              value: "suma",
+              column: 7,
+            },
+            right: {
+              type: "number",
+              value: "5",
+              column: 14,
+            },
+          },
+        },
+      ];
+
+      expect(result).toEqual(expected);
+    });
+
+    it("Deberia parsear un identificador con una string como concatenacion", () => {
+      const tokens: Token[][] = [
+        [
+          {
+            type: "identifier",
+            value: "mensaje",
+            column: 0,
+          },
+          {
+            type: "operator",
+            value: "=",
+            column: 8,
+          },
+          {
+            type: "identifier",
+            value: "mensaje",
+            column: 9,
+          },
+          {
+            type: "operator",
+            value: "+",
+            column: 16,
+          },
+          {
+            type: "string",
+            value: '" mundo"',
+            column: 18,
+          },
+        ],
+      ];
+
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "assignment",
+          variable: {
+            type: "identifier",
+            value: "mensaje",
+            column: 0,
+          },
+          value: {
+            type: "binary_expression",
+            operator: "+",
+            left: {
+              type: "identifier",
+              value: "mensaje",
+              column: 9,
+            },
+            right: {
+              type: "string",
+              value: '" mundo"',
+              column: 18,
+            },
+          },
+        },
+      ];
+
+      expect(result).toEqual(expected);
+    });
+
     describe("Errores de variables", () => {
       it("Deberia lanzar error si la variable constante no tiene valor", () => {
         const tokens: Token[][] = [
@@ -804,6 +953,48 @@ describe("AnalizadorSintactico", () => {
         });
       }
     );
+
+    it("Deberia parsear un numero con un identificado", () => {
+      const tokens: Token[][] = [
+        [
+          {
+            type: "number",
+            value: "10",
+            column: 0,
+          },
+          {
+            type: "operator",
+            value: "+",
+            column: 2,
+          },
+          {
+            type: "identifier",
+            value: "x",
+            column: 4,
+          },
+        ],
+      ];
+
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "binary_expression",
+          operator: "+",
+          left: {
+            type: "number",
+            value: "10",
+            column: 0,
+          },
+          right: {
+            type: "identifier",
+            value: "x",
+            column: 4,
+          },
+        },
+      ];
+
+      expect(result).toEqual(expected);
+    });
   });
 
   describe("Operadores de Comparacion", () => {
