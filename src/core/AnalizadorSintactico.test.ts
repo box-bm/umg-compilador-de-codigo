@@ -534,6 +534,85 @@ describe("AnalizadorSintactico", () => {
       expect(result).toEqual(expected);
     });
 
+    it("Deberia parsear un identificador con una concatenacion de strings y numeros", () => {
+      const tokens: Token[][] = [
+        [
+          {
+            type: "identifier",
+            value: "mensaje",
+            column: 0,
+          },
+          {
+            type: "operator",
+            value: "=",
+            column: 8,
+          },
+          {
+            type: "string",
+            value: '"Hola"',
+            column: 9,
+          },
+          {
+            type: "operator",
+            value: "+",
+            column: 15,
+          },
+          {
+            type: "number",
+            value: "5",
+            column: 17,
+          },
+          {
+            type: "operator",
+            value: "+",
+            column: 18,
+          },
+          {
+            type: "string",
+            value: '" mundo"',
+            column: 20,
+          },
+        ],
+      ];
+
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "assignment",
+          variable: {
+            type: "identifier",
+            value: "mensaje",
+            column: 0,
+          },
+          value: {
+            type: "binary_expression",
+            operator: "+",
+            left: {
+              type: "binary_expression",
+              operator: "+",
+              left: {
+                type: "string",
+                value: '"Hola"',
+                column: 9,
+              },
+              right: {
+                type: "number",
+                value: "5",
+                column: 17,
+              },
+            },
+            right: {
+              type: "string",
+              value: '" mundo"',
+              column: 20,
+            },
+          },
+        },
+      ];
+
+      expect(result).toEqual(expected);
+    });
+
     describe("Errores de variables", () => {
       it("Deberia lanzar error si la variable constante no tiene valor", () => {
         const tokens: Token[][] = [
@@ -2064,6 +2143,136 @@ describe("AnalizadorSintactico", () => {
               ],
             },
           ],
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+  });
+
+  describe("Print Statements", () => {
+    it("Deberia parsear una sentencia print con un string", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "print", column: 0 },
+          { type: "string", value: '"Hola Mundo"', column: 6 },
+        ],
+      ];
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "print_statement",
+          argument: {
+            type: "string",
+            value: '"Hola Mundo"',
+            column: 6,
+          },
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+
+    it("Deberia parsear una sentencia print con un numero", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "print", column: 0 },
+          { type: "number", value: "42", column: 6 },
+        ],
+      ];
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "print_statement",
+          argument: {
+            type: "number",
+            value: "42",
+            column: 6,
+          },
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+
+    it("Deberia parsear una sentencia print con un boolean", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "print", column: 0 },
+          { type: "boolean", value: "true", column: 6 },
+        ],
+      ];
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "print_statement",
+          argument: {
+            type: "boolean",
+            value: "true",
+            column: 6,
+          },
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+
+    it("Deberia parsear una sentencia print con un identificador", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "print", column: 0 },
+          { type: "identifier", value: "x", column: 6 },
+        ],
+      ];
+      const result = AnalizadorSintactico(tokens);
+      const expected = [
+        {
+          type: "print_statement",
+          argument: {
+            type: "identifier",
+            value: "x",
+            column: 6,
+          },
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+
+    it("Deberia concatener varios argumentos en una sentencia print", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "print", column: 0 },
+          { type: "string", value: '"Hola"', column: 6 },
+          { value: "+", type: "operator", column: 12 },
+          { type: "number", value: "42", column: 14 },
+          { value: "+", type: "operator", column: 16 },
+          { type: "string", value: " mundo", column: 18 },
+        ],
+      ];
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "print_statement",
+          argument: {
+            type: "binary_expression",
+            operator: "+",
+
+            left: {
+              type: "binary_expression",
+              operator: "+",
+              left: {
+                type: "string",
+                value: '"Hola"',
+                column: 6,
+              },
+              right: {
+                type: "number",
+                value: "42",
+                column: 14,
+              },
+            },
+            right: {
+              type: "string",
+              value: " mundo",
+              column: 18,
+            },
+          },
         },
       ];
       expect(result).toEqual(expected);

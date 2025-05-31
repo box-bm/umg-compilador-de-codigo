@@ -305,9 +305,15 @@ function parseBody(
     }
     // PRINT
     if (tokens[0].type === "keyword" && tokens[0].value === "print") {
+      if (tokens.length < 2) {
+        return error("Falta argumento en print", tokens[0].column, i + 1);
+      }
+      // Cambiado: analizar todos los tokens después de 'print' como una expresión
+      const expr = parseExpression(tokens.slice(1), i + 1);
+      if (isErrorDefinition(expr)) return expr;
       body.push({
         type: "print_statement",
-        argument: tokens[1],
+        argument: expr,
       });
       i++;
       continue;
