@@ -108,6 +108,25 @@ describe("AnalizadorSemantico", () => {
       ];
       expect(AnalizadorSemantico(ast)).toEqual(true);
     });
+
+    it("Deberia detectar si se asigna una variable no declarada", () => {
+      const ast: BodyStatement = [
+        {
+          type: "assignment",
+          variable: { type: "identifier", value: "x", column: 4 },
+          value: { type: "number", value: "10", column: 8 },
+        },
+      ];
+
+      const error: ErrorDefinition = {
+        type: "SemanticError",
+        message: "Variable 'x' no declarada",
+        column: 4,
+        line: 1,
+      };
+
+      expect(AnalizadorSemantico(ast)).toEqual(error);
+    });
   });
 
   describe("Operadores Aritmeticos", () => {
@@ -433,12 +452,12 @@ describe("AnalizadorSemantico", () => {
     it("deberia deetectar variables no asignada en la comparación del if", () => {
       const ast: BodyStatement = [
         {
-          type: 'new_variable_declaration_assignment',
+          type: "new_variable_declaration_assignment",
           variable: { type: "identifier", value: "x", column: 0 },
           value: { type: "number", value: "5", column: 2 },
         },
         {
-          type: 'new_variable_declaration',
+          type: "new_variable_declaration",
           variable: { type: "identifier", value: "y", column: 4 },
         },
         {
@@ -450,9 +469,9 @@ describe("AnalizadorSemantico", () => {
             right: { type: "identifier", value: "y", column: 4 },
           },
           body: [],
-        },  
+        },
       ];
-      
+
       const error: ErrorDefinition = {
         type: "SemanticError",
         message: "Variable 'y' no declarada",

@@ -73,7 +73,7 @@ function getType(
   if (e.type === "comparison_expression") {
     const ce = expr as ComparisonExpression;
     let l = getType(ce.left, ctx);
-    if (l === 'unknown') {
+    if (l === "unknown") {
       return {
         type: "SemanticError",
         message: `Variable '${(ce.left as Token).value}' no declarada`,
@@ -83,7 +83,7 @@ function getType(
     }
     if (typeof l === "object") return l;
     let r = getType(ce.right, ctx);
-    if (r === 'unknown') {
+    if (r === "unknown") {
       return {
         type: "SemanticError",
         message: `Variable '${(ce.right as Token).value}' no declarada`,
@@ -153,9 +153,19 @@ function getColumnFromCondition(cond: unknown): number {
   if (!cond || typeof cond !== "object" || !("type" in cond)) return 0;
   const c = cond as { type: string };
   if (c.type === "comparison_expression" || c.type === "logical_operation") {
-    if ("left" in c && c.left && typeof c.left === "object" && "column" in c.left)
+    if (
+      "left" in c &&
+      c.left &&
+      typeof c.left === "object" &&
+      "column" in c.left
+    )
       return (c.left as Token).column;
-    if ("right" in c && c.right && typeof c.right === "object" && "column" in c.right)
+    if (
+      "right" in c &&
+      c.right &&
+      typeof c.right === "object" &&
+      "column" in c.right
+    )
       return (c.right as Token).column;
     return 0;
   }
@@ -176,7 +186,15 @@ function checkBody(
     const stmt = body[i];
     const currentLine = baseLine + i;
 
-    if (stmt.type === "new_variable_declaration") {
+    // Si la variable no está declarada, error inmediato
+    if (stmt.type === "assignment" && !localCtx[stmt.variable.value]) {
+      return {
+        type: "SemanticError",
+        message: `Variable '${stmt.variable.value}' no declarada`,
+        column: stmt.variable.column,
+        line: currentLine,
+      };
+    } else if (stmt.type === "new_variable_declaration") {
       const v = stmt.variable.value;
       if (localCtx[v] && !localCtx[v].constant) {
         return {
@@ -229,7 +247,6 @@ function checkBody(
         };
       }
       localCtx[v] = { type: "unknown" };
-
     } else if (
       stmt.type === "assignment" ||
       stmt.type === "new_variable_declaration_assignment"
@@ -409,7 +426,6 @@ function checkBody(
   }
   return true;
 }
-
 
 const AnalizadorSemantico = (astBody: BodyStatement) => {
   return checkBody(astBody);
