@@ -4,17 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/src/web/styles.css" />
+
+             <!-- Phone -->
+     <link rel="stylesheet" href="./src/web/styles.css" />
+
+         <!-- Desktop -->
+     <link rel="stylesheet" href="./src/web/desktop.css" media="screen and (min-width: 750px)" />
     <title>Compilador de codigo</title>
   </head>
   <body>
-    <div class="container">
+    <main class="container">
       <header>
-        <h1>Compilador</h1>
+        <div class="header__text">
+            <h1>OCTANE</h1>
+            <p>Compilador</p>
+        </div>
+      
+
+        <span class=" computer-icon icon" ></span>
+
       </header>
 
-      <div class="editor-container">
+      <section class="editor-container">
         <div class="editor-box">
-          <div class="editor-label">Editor</div>
+          <div class="editor-box__text">
+            <span class="icon code-icon"></span>
+            <h2 class="editor-label">Editor</h2>
+          </div>
           <textarea
             id="editor"
             class="editor"
@@ -25,10 +41,13 @@
           <button id="compile-btn" class="compile-btn">Compilar</button>
           <div class="file-upload">
             <div class="file-upload-label">Subir archivo:</div>
-            <input type="file" id="file-upload" accept="text/plain" />
+            <label for="file-upload">
+              <span class="icon file-icon" ></span>
+            </label>
+            <input type="file" id="file-upload" accept="text/plain"  />
           </div>
         </div>
-      </div>
+      </section>
 
       <section class="output-section">
         <h1 class="output-label">Resultados de la compilación</h1>
@@ -45,7 +64,7 @@
           <div id="output-sintactico"></div>
         </div>
       </section>
-    </div>
+    </main>
     <script type="module" src="/src/web/main.ts"></script>
   </body>
 </html>
