@@ -1355,5 +1355,74 @@ describe("AnalizadorSemantico", () => {
       ];
       expect(AnalizadorSemantico(ast)).toEqual(true);
     });
+
+    it("Deberia detectar variables no declaradas en el caso de uso real", () => {
+      const ast: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "x", column: 0 },
+          value: { type: "number", value: "10", column: 2 },
+        },
+        {
+          type: "print_statement",
+          argument: { type: "identifier", value: "y", column: 2 },
+        },
+      ];
+      const error: ErrorDefinition = {
+        type: "SemanticError",
+        message: "Variable 'y' no declarada",
+        column: 2,
+        line: 2,
+      };
+      expect(AnalizadorSemantico(ast)).toEqual(error);
+    });
+
+    it("Deberia detectar variables no declaradas en el caso de uso real con operaciones aritmeticas", () => {
+      const ast: BodyStatement = [
+        {
+          type: "new_variable_declaration_assignment",
+          variable: { type: "identifier", value: "x", column: 0 },
+          value: { type: "number", value: "10", column: 2 },
+        },
+        {
+          type: "print_statement",
+          argument: {
+            type: "binary_expression",
+            operator: "+",
+            left: { type: "identifier", value: "x", column: 2 },
+            right: { type: "identifier", value: "y", column: 4 },
+          },
+        },
+      ];
+      const error: ErrorDefinition = {
+        type: "SemanticError",
+        message: "Variable 'y' no declarada",
+        column: 4,
+        line: 2,
+      };
+      expect(AnalizadorSemantico(ast)).toEqual(error);
+    });
+
+    it("Deberia detectar constante asignada con variables binarias", () => {
+      const ast: BodyStatement = [
+        {
+          type: "constant_variable_declaration",
+          variable: { type: "identifier", value: "PI", column: 0 },
+          value: {
+            type: "binary_expression",
+            operator: "+",
+            left: { type: "number", value: "3.14", column: 2 },
+            right: { type: "number", value: "z", column: 7 },
+          }
+        },
+      ];
+      const error: ErrorDefinition = {
+        type: "SemanticError",
+        message: "Variable 'z' no declarada",
+        column: 7,
+        line: 1,
+      };
+      expect(AnalizadorSemantico(ast)).toEqual(error);
+    });
   });
 });

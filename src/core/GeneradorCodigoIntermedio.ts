@@ -1,4 +1,4 @@
-import type { BodyStatement } from "../types/AST";
+import type { BodyStatement, BinaryExpression, ComparisonExpression, LogicalOperation } from "../types/AST";
 
 // Representación simple de una instrucción de código intermedio
 type InstruccionIntermedia = string;
@@ -10,25 +10,54 @@ type InstruccionIntermedia = string;
  */
 export function generarCodigoIntermedio(ast: BodyStatement): InstruccionIntermedia[] {
   const instrucciones: InstruccionIntermedia[] = [];
+  let tempCount = 0;
 
-  function genExpr(expr: any): string {
-    if (!expr) return "";
-    switch (expr.type) {
+  function nuevoTemporal() {
+    tempCount++;
+    return `t${tempCount}`;
+  }
+
+  // Genera código para una expresión y retorna el nombre del temporal/resultante
+  function genExpr(expr: unknown): string {
+    if (!expr || typeof expr !== "object" || !("type" in expr)) return "";
+    const e = expr as { type: string };
+    switch (e.type) {
       case "number":
       case "string":
       case "boolean":
       case "identifier":
-        return expr.value;
-      case "binary_expression":
-        return `${genExpr(expr.left)} ${expr.operator} ${genExpr(expr.right)}`;
-      case "comparison_expression":
-        return `${genExpr(expr.left)} ${expr.operator} ${genExpr(expr.right)}`;
-      case "logical_operation":
-        if (expr.operator === "!") {
-          return `!${genExpr(expr.left)}`;
+        return (expr as unknown as { value: string }).value;
+      case "binary_expression": {
+        const be = expr as BinaryExpression;
+        const left = genExpr(be.left);
+        const right = genExpr(be.right);
+        const temp = nuevoTemporal();
+        instrucciones.push(`${temp} = ${left} ${be.operator} ${right}`);
+        return temp;
+      }
+      case "comparison_expression": {
+        const ce = expr as ComparisonExpression;
+        const left = genExpr(ce.left);
+        const right = genExpr(ce.right);
+        const temp = nuevoTemporal();
+        instrucciones.push(`${temp} = ${left} ${ce.operator} ${right}`);
+        return temp;
+      }
+      case "logical_operation": {
+        const lo = expr as LogicalOperation;
+        if (lo.operator === "!") {
+          const left = genExpr(lo.left);
+          const temp = nuevoTemporal();
+          instrucciones.push(`${temp} = !${left}`);
+          return temp;
         } else {
-          return `${genExpr(expr.left)} ${expr.operator} ${genExpr(expr.right)}`;
+          const left = genExpr(lo.left);
+          const right = genExpr(lo.right);
+          const temp = nuevoTemporal();
+          instrucciones.push(`${temp} = ${left} ${lo.operator} ${right}`);
+          return temp;
         }
+      }
       default:
         return "";
     }
@@ -39,24 +68,33 @@ export function generarCodigoIntermedio(ast: BodyStatement): InstruccionIntermed
       case "new_variable_declaration":
         instrucciones.push(`DECL ${stmt.variable.value}`);
         break;
-      case "new_variable_declaration_assignment":
+      case "new_variable_declaration_assignment": {
         instrucciones.push(`DECL ${stmt.variable.value}`);
-        instrucciones.push(`SET ${stmt.variable.value} = ${genExpr(stmt.value)}`);
+        const val = genExpr(stmt.value);
+        instrucciones.push(`SET ${stmt.variable.value} = ${val}`);
         break;
-      case "constant_variable_declaration":
-        instrucciones.push(`CONST ${stmt.variable.value} = ${genExpr(stmt.value)}`);
+      }
+      case "constant_variable_declaration": {
+        const val = genExpr(stmt.value);
+        instrucciones.push(`CONST ${stmt.variable.value} = ${val}`);
         break;
-      case "assignment":
-        instrucciones.push(`SET ${stmt.variable.value} = ${genExpr(stmt.value)}`);
+      }
+      case "assignment": {
+        const val = genExpr(stmt.value);
+        instrucciones.push(`SET ${stmt.variable.value} = ${val}`);
         break;
-      case "print_statement":
-        instrucciones.push(`PRINT ${genExpr(stmt.argument)}`);
+      }
+      case "print_statement": {
+        const val = genExpr(stmt.argument);
+        instrucciones.push(`PRINT ${val}`);
         break;
+      }
       case "binary_expression":
       case "comparison_expression":
-      case "logical_operation":
-        instrucciones.push(`EXPR ${genExpr(stmt)}`);
+      case "logical_operation": {
+        genExpr(stmt); // Solo para efectos secundarios (instrucciones generadas)
         break;
+      }
       case "if_statement": {
         const cond = genExpr(stmt.condition);
         const labelElse = `L${instrucciones.length}_ELSE`;
@@ -97,13 +135,16 @@ export function generarCodigoIntermedio(ast: BodyStatement): InstruccionIntermed
         const labelStart = `L${instrucciones.length}_FOR`;
         const labelEnd = `L${instrucciones.length}_END`;
         instrucciones.push(`DECL ${stmt.iterator.variable.value}`);
-        instrucciones.push(`SET ${stmt.iterator.variable.value} = ${genExpr(stmt.init)}`);
+        const initVal = genExpr(stmt.init);
+        instrucciones.push(`SET ${stmt.iterator.variable.value} = ${initVal}`);
         instrucciones.push(`${labelStart}:`);
-        instrucciones.push(`IF_FALSE ${stmt.iterator.variable.value} > ${genExpr(stmt.end)} GOTO ${labelEnd}`);
+        const endVal = genExpr(stmt.end);
+        instrucciones.push(`IF_FALSE ${stmt.iterator.variable.value} > ${endVal} GOTO ${labelEnd}`);
         const bodyInstr = generarCodigoIntermedio(stmt.body);
         instrucciones.push(...bodyInstr);
         if (stmt.step) {
-          instrucciones.push(`SET ${stmt.iterator.variable.value} = ${stmt.iterator.variable.value} + ${genExpr(stmt.step)}`);
+          const stepVal = genExpr(stmt.step);
+          instrucciones.push(`SET ${stmt.iterator.variable.value} = ${stmt.iterator.variable.value} + ${stepVal}`);
         } else {
           instrucciones.push(`SET ${stmt.iterator.variable.value} = ${stmt.iterator.variable.value} + 1`);
         }
