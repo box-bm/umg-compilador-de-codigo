@@ -24,6 +24,7 @@ Cada archivo esta seguido de su archivo de test con jest.
 ```bash
 ├── src/
 │   ├── main                        # Punto de inicio del programa
+│   ├── web                         # directorio para la interfaz web
 │   └── core/                       # Almacena todo el core del sistema
 │     ├── AnalizadorLexico
 │     ├── AnalizadorSemantico
@@ -39,6 +40,8 @@ Cada archivo esta seguido de su archivo de test con jest.
     Se construye el árbol de sintaxis basado en la gramática definida.
 3.  Análisis semántico
     Se validan reglas semánticas como tipos, declaraciones, usos de variables, etc.
+4.  Generador de codigo intermedio 
+    Se genera un código intermedio que representa la lógica del programa.
 
 🧪 Tecnologías Usadas
 • TypeScript
@@ -65,7 +68,7 @@ npm install
 
 # Ejecutar compilador
 
-npm run start archivoFuente.txt
+npm run dev
 
 # Correr pruebas
 
