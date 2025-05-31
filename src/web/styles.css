@@ -1,27 +1,105 @@
 /* General IDE-like theme */
-body {
-  background: #23272e;
-  color: #d4d7db;
-  font-family: "Fira Mono", "Consolas", "Menlo", monospace;
-  margin: 0;
+:root {
+  --azul_oscuro: #1c1c3b;
+  --azul_intermedio: #4a4e68;
+  --azul_claro: #7109aa;
+
+  --amarillo_alto: #ffff00;
+  --amarillo_medio: #fab700;
+  --naranja_medio: #f45e01;
+  --celeste: #65b5f6;
+  --celeste_dos:#7a9bc8;
+  --rojo_intermedio:#CD0074;
+}
+/*Estilos base*/
+
+* {
+  box-sizing: border-box;
   padding: 0;
+  margin: 0;
 }
 
-header h1 {
+html {
+  font-size: 62.5%;
+}
+
+body {
+  background: #23272e;
+  font-family: "Fira Mono", "Consolas", "Menlo", monospace;
+}
+
+main {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  /* border: 1px solid yellow; */
+}
+
+
+/*Header*/
+
+header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+header .header__text {
   color: #61dafb;
   font-size: 2.2rem;
-  margin-bottom: 24px;
   letter-spacing: 2px;
   text-align: center;
 }
 
+.header__text p {
+  font-size: 1.8rem;
+  color: var(--azul_intermedio);
+}
+
+/*Icons*/
+
+.computer-icon {
+  width: 5rem;
+  height: 3.5rem;
+  background: url("../assets/icons/laptop-code-solid.svg");
+}
+
+.code-icon {
+  background: url("../assets/icons/terminal-solid.svg");
+  width: 1rem;
+  height: 1rem;
+}
+
+.file-icon {
+  background: url("../assets/icons/file-code-solid.svg");
+  width: 1.5rem;
+  height: 2rem;
+}
+
+.icon {
+  display: inline-block;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
 /* Editor styles */
 .editor-container {
-  max-width: 1200px;
-  margin: 32px auto;
+  width: 95%;
+  margin: 0 auto;
+  min-width: 310px;
+  max-width: 1100px;
+  margin: 1rem auto;
   background: #282c34;
-
-  padding: 32px 24px 24px 24px;
+  padding: 2rem 1.5rem;
+  /* box-shadow: 0px 0px 7px 0px #65b5f6; */
+  border-radius: 1rem;
 }
 
 .editor-box {
@@ -31,9 +109,16 @@ header h1 {
   box-shadow: 0 2px 8px #0004;
 }
 
+.editor-box__text {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .editor-label {
   color: #abb2bf;
-  font-size: 1rem;
+  font-size: 1.5rem;
   margin-bottom: 6px;
   font-weight: bold;
 }
@@ -55,7 +140,19 @@ header h1 {
 }
 
 .editor:focus {
-  box-shadow: 0 0 0 2px #61dafb55;
+  outline: none;
+  border-color: var(--celeste);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+.editor::placeholder {
+  color: var(--celeste_dos);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.editor:focus {
+  box-shadow: 0 0 0 2px var(--azul_intermedio);
 }
 
 /* Controls */
@@ -65,6 +162,8 @@ header h1 {
   align-items: center;
   gap: 24px;
   margin-bottom: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .compile-btn {
@@ -88,48 +187,52 @@ header h1 {
 .file-upload {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
 .file-upload-label {
   color: #abb2bf;
-  font-size: 1rem;
+  font-size: 1.3rem;
 }
 
-input[type="file"] {
+
+#file-upload{
   background: #23272e;
   color: #abb2bf;
   border: none;
   border-radius: 4px;
   padding: 4px 0;
   font-size: 1rem;
-}
+} 
 
 /* Output section */
 .output-section {
+
   background: #21252b;
   border-radius: 6px;
-  margin-top: 18px;
-  padding: 18px 16px;
+  margin-top:1rem;
+  padding: 1rem;
   box-shadow: 0 2px 8px #0002;
 }
 
 .output-label {
   color: #61dafb;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   margin-bottom: 16px;
   letter-spacing: 1px;
 }
 
 .output-section h2 {
-  color: #98c379;
+  color: var(--amarillo_medio);
   font-size: 1.1rem;
   margin-top: 18px;
   margin-bottom: 8px;
 }
 
 #output-lexico,
-#output-sintactico {
+#output-sintactico,
+#output-codigo {
   background: #1e2127;
   border-radius: 4px;
   padding: 10px 14px;
@@ -139,6 +242,8 @@ input[type="file"] {
   margin-bottom: 10px;
   white-space: pre-wrap;
   box-shadow: 0 1px 4px #0002 inset;
+  display: flex;
+  justify-content: center;
 }
 
 /* Compilation success message */
@@ -191,17 +296,65 @@ input[type="file"] {
   display: block;
 }
 
-/* Responsive */
-@media (max-width: 700px) {
-  .container {
-    padding: 12px 2vw;
-  }
-  .controls {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-  .output-section {
-    padding: 10px 4px;
-  }
+/*table*/
+.glass-table {
+
+  width: 75%;
+  min-width: 280px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: none;
+  backdrop-filter: blur(10px);
+  
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
+
+.glass-table th {
+  background: none;
+  color: var(--amarillo_alto);
+  padding: 0.5rem 0.8rem ;
+  text-align: left;
+  font-weight: 500;
+
+}
+
+.glass-table td {
+  padding: 0.5rem 0.8rem ;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.glass-table tr:hover td {
+  background: rgba(0, 120, 255, 0.1);
+  color: white;
+}
+
+
+/*JSON*/
+
+
+.json-key {
+  color: var(--amarillo_alto);
+}
+
+.json-string {
+  color: var(--celeste);
+}
+
+.json-number {
+  color: var(--azul_claro);
+}
+
+.json-boolean {
+  color: var(--rojo_intermedio);
+}
+
+.json-null {
+  color: #6c757d;
+}
+
+
+
+

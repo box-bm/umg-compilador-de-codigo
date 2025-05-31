@@ -12,6 +12,8 @@ const outputSintactico = document.getElementById(
   "output-sintactico"
 ) as HTMLDivElement;
 
+const outputCodigo = document.getElementById("output-codigo") as HTMLDivElement;
+
 const Compilador = (lineas: string[]): void => {
   outputLexico.innerHTML = "";
   outputSintactico.innerHTML = "";
@@ -24,8 +26,8 @@ const Compilador = (lineas: string[]): void => {
   }
   console.log("Tokens Generados:", tokens);
 
-  outputLexico.innerHTML = `
-    <table border="1" cellpadding="4" cellspacing="0">
+  outputLexico.innerHTML = /*html */ `
+    <table  border="1" cellpadding="4" cellspacing="0" class="glass-table">
       <thead>
         <tr>
           <th>Línea</th>
@@ -61,8 +63,35 @@ const Compilador = (lineas: string[]): void => {
     if ("message" in ast && "line" in ast && "column" in ast) {
       throw ast as ErrorDefinition;
     }
+
+
+
     // Si no hay errores, mostramos el arbol de sintaxis
-    outputSintactico.innerHTML = `<pre>${JSON.stringify(ast, null, 2)}</pre>`;
+
+  const jsonToHtml = (json:any ) :string => {
+  const str = JSON.stringify(json, null, 2);
+  return str
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?)/g, match => {
+      let cls = 'json-value';
+      if (/:$/.test(match)) {
+        cls = 'json-key';
+      } else if (/^"/.test(match)) {
+        cls = 'json-string';
+      } else if (/true|false/.test(match)) {
+        cls = 'json-boolean';
+      } else if (/null/.test(match)) {
+        cls = 'json-null';
+      } else if (!isNaN(parseFloat(match))) {
+        cls = 'json-number';
+      }
+      return `<span class="${cls}">${match}</span>`;
+    });
+}
+
+    // outputSintactico.innerHTML = `<pre>${JSON.stringify(ast, null, 2)}</pre>`;
+    outputSintactico.innerHTML =`<pre>${jsonToHtml(ast)}</pre>`;
+
+
 
     // Generamos el arbol de derivacion semantica y puede devolver error o se completa el proceso
     const revision = AnalizadorSemantico(ast as BodyStatement);
@@ -79,7 +108,33 @@ const Compilador = (lineas: string[]): void => {
 
     const codigoIntermedio = generarCodigoIntermedio(ast);
     console.log("Código Intermedio Generado:", codigoIntermedio);
-    
+    const codigoIntermedioHtml= /*html */ `
+        <table  border="1" cellpadding="4" cellspacing="0" class="glass-table">
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Statement</th>
+        </tr>
+        </thead>
+      <tbody>
+    ${
+      codigoIntermedio
+        .map((value, index) =>
+          `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${value}</td>
+              
+            </tr>
+          `
+          ).join("")
+
+        }
+      </tbody>
+      </table>
+    `
+
+    outputCodigo.innerHTML = codigoIntermedioHtml
   } catch (error) {
     // Se capturan los errores y se muestran en el output sintactico o semantico
     if (
