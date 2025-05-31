@@ -500,10 +500,16 @@ function parseBody(
         bodyEnd++;
       const ifBody = parseBody(tokenLines, bodyStart, bodyEnd);
       if (isErrorDefinition(ifBody)) return ifBody;
-      let elseBody: BodyStatement | undefined = undefined;
-      let elseIf: IfStatement | undefined = undefined;
       let next = bodyEnd;
-      if (next < end && isElseLine(tokenLines[next])) {
+      // --- NUEVO: Manejar múltiples else if y else ---
+      const currentIf: IfStatement = {
+        type: "if_statement",
+        condition: cond as Token | ComparisonExpression | LogicalOperation,
+        body: ifBody as BodyStatement,
+      };
+      let lastIf = currentIf;
+      let foundElseBody: BodyStatement | undefined = undefined;
+      while (next < end && isElseLine(tokenLines[next])) {
         const elseTokens = tokenLines[next];
         if (
           elseTokens.length > 1 &&
@@ -550,14 +556,13 @@ function parseBody(
             elseIfBodyEnd
           );
           if (isErrorDefinition(elseIfBody)) return elseIfBody;
-          elseIf = {
+          const newElseIf: IfStatement = {
             type: "if_statement",
-            condition: elseIfCondParsed as
-              | Token
-              | ComparisonExpression
-              | LogicalOperation,
+            condition: elseIfCondParsed as Token | ComparisonExpression | LogicalOperation,
             body: elseIfBody as BodyStatement,
           };
+          lastIf.elseIf = newElseIf;
+          lastIf = newElseIf;
           next = elseIfBodyEnd;
         } else {
           const elseBodyStart = next + 1;
@@ -570,22 +575,19 @@ function parseBody(
             !isWhileLine(tokenLines[elseBodyEnd])
           )
             elseBodyEnd++;
-          elseBody = parseBody(
+          foundElseBody = parseBody(
             tokenLines,
             elseBodyStart,
             elseBodyEnd
           ) as BodyStatement;
           next = elseBodyEnd;
+          break; // Solo puede haber un else final
         }
       }
-      const ifStmt: IfStatement = {
-        type: "if_statement",
-        condition: cond as Token | ComparisonExpression | LogicalOperation,
-        body: ifBody as BodyStatement,
-      };
-      if (elseBody) ifStmt.elseBody = elseBody;
-      if (elseIf) ifStmt.elseIf = elseIf;
-      body.push(ifStmt);
+      if (foundElseBody) {
+        currentIf.elseBody = foundElseBody;
+      }
+      body.push(currentIf);
       i = next;
       continue;
     }
