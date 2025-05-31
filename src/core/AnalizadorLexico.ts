@@ -7,7 +7,7 @@ const tableMatch: {
 }[] = [
   {
     regex:
-      /^let|^if|^else|^while|^const|^for|^do|^to|^step|^switch|^case|^default$/,
+      /^let|^if|^else|^while|^const|^for|^do|^to|^step|^switch|^case|^default|^print$/,
     type: "keyword",
   },
   {

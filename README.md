@@ -1,8 +1,12 @@
 # 🛠️ Compilador - Proyecto Final de Compiladores
 
-Este proyecto consiste en el desarrollo de un compilador completo para un lenguaje de programación nuevo, diseñado desde cero por nuestro equipo. Implementado en **TypeScript**, el compilador incluye las siguientes fases: análisis léxico, sintáctico y semántico, junto con una posible generación de código intermedio o final.
+Este proyecto es un compilador para un lenguaje de programación diseñado específicamente para el curso de Compiladores en la Universidad Mariano Gálvez. El objetivo es implementar un compilador que pueda analizar, interpretar y optimizar código escrito en este lenguaje.
 
-## Lenguaje del compilador
+## Lenguaje de Programación: Octane
+
+Octane es un lenguaje de programación diseñado para ser simple y fácil de entender, ideal para estudiantes que están aprendiendo sobre compiladores. Su sintaxis se inspira en Python, pero con características simplificadas para facilitar el análisis y la interpretación.
+
+## Guia del lenguaje
 
 Hemos diseñado un lenguaje de programacion basico, basado en python y simplificado. Para tener una guia puedes ver [Documentacion del lenguaje](./Lenguaje.md) para saber como se debe de programar con dicho lenguaje.
 

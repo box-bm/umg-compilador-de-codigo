@@ -663,16 +663,18 @@ function parseBody(
       ) {
         // ok
       }
+      // --- NUEVO: Determinar el nivel de indentación del for ---
+      const forIndent = tokens[0].column;
       const bodyStart = i + 1;
       let bodyEnd = bodyStart;
       while (
         bodyEnd < end &&
-        !isIfLine(tokenLines[bodyEnd]) &&
-        !isElseLine(tokenLines[bodyEnd]) &&
-        !isForLine(tokenLines[bodyEnd]) &&
-        !isWhileLine(tokenLines[bodyEnd])
-      )
+        tokenLines[bodyEnd] &&
+        tokenLines[bodyEnd].length > 0 &&
+        tokenLines[bodyEnd][0].column > forIndent
+      ) {
         bodyEnd++;
+      }
       const forBody = parseBody(tokenLines, bodyStart, bodyEnd);
       if (isErrorDefinition(forBody)) return forBody;
       body.push({

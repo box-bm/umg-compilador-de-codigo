@@ -3,6 +3,7 @@ import {
   AnalizadorSemantico,
   AnalizadorSintactico,
 } from "../core";
+import generarCodigoIntermedio from "../core/GeneradorCodigoIntermedio";
 import { type BodyStatement, type ErrorDefinition } from "../types";
 import { MostrarError, OcultarErrores } from "./MostrarErrores";
 
@@ -21,12 +22,14 @@ const Compilador = (lineas: string[]): void => {
     const lineTokens = AnalizadorLexico(linea);
     tokens.push(lineTokens);
   }
+  console.log("Tokens Generados:", tokens);
 
   outputLexico.innerHTML = `
     <table border="1" cellpadding="4" cellspacing="0">
       <thead>
         <tr>
           <th>Línea</th>
+          <th>Columna</th>
           <th>Tipo</th>
           <th>Valor</th>
         </tr>
@@ -36,9 +39,10 @@ const Compilador = (lineas: string[]): void => {
           .map((lineTokens, idx) =>
             lineTokens
               .map(
-                (token: any) =>
+                (token) =>
                   `<tr>
                       <td>${idx + 1}</td>
+                      <td>${token.column}</td>
                       <td>${token.type}</td>
                       <td>${token.value}</td>
                     </tr>`
@@ -72,6 +76,10 @@ const Compilador = (lineas: string[]): void => {
     ) {
       throw revision as ErrorDefinition;
     }
+
+    const codigoIntermedio = generarCodigoIntermedio(ast);
+    console.log("Código Intermedio Generado:", codigoIntermedio);
+    
   } catch (error) {
     // Se capturan los errores y se muestran en el output sintactico o semantico
     if (

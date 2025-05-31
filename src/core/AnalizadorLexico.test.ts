@@ -1,5 +1,5 @@
 import AnalizadorLexico from "./AnalizadorLexico";
-import type Token from "../types/Token";
+import type { Token } from "../types/Token";
 
 describe("AnalizadorLexico", () => {
   describe("líneas vacías", () => {
@@ -98,7 +98,7 @@ describe("AnalizadorLexico", () => {
         { type: "identifier", value: "x", column: 4 },
       ] as Token[]);
     });
-    
+
     it("debería manejar declaraciones de variables", () => {
       const line = "let x = 10";
       const result = AnalizadorLexico(line);
@@ -344,7 +344,8 @@ describe("AnalizadorLexico", () => {
       ] as Token[]);
     });
 
-    it("debería manejar sentencias else", () => { //Separe el else del signo : 
+    it("debería manejar sentencias else", () => {
+      //Separe el else del signo :
       const line = "else :";
       const result = AnalizadorLexico(line);
       expect(result).toEqual([

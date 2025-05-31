@@ -1,4 +1,4 @@
-import Token from "../types/Token";
+import type { Token } from "../types/Token";
 import AnalizadorSintactico from "./AnalizadorSintactico";
 import type {
   BodyStatement,
@@ -1384,6 +1384,114 @@ describe("AnalizadorSintactico", () => {
       expect(result).toEqual(expected);
     });
 
+    it("Deberia parsear una sentencia if con else if y else", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "if", column: 0 },
+          { type: "identifier", value: "x", column: 2 },
+          { type: "operator", value: "==", column: 4 },
+          { type: "number", value: "10", column: 7 },
+          { type: "punctuation", value: ":", column: 9 },
+        ],
+        [
+          { type: "keyword", value: "print", column: 2 },
+          { type: "string", value: '"Es 10"', column: 8 },
+        ],
+        [
+          { type: "keyword", value: "else", column: 0 },
+          { type: "keyword", value: "if", column: 4 },
+          { type: "identifier", value: "y", column: 7 },
+          { type: "operator", value: "<=", column: 9 },
+          { type: "number", value: "20", column: 12 },
+          { type: "punctuation", value: ":", column: 14 },
+        ],
+        [
+          { type: "keyword", value: "print", column: 2 },
+          { type: "string", value: '"Es menor o igual a 20"', column: 8 },
+        ],
+        [
+          { type: "keyword", value: "else", column: 0 },
+          { type: "punctuation", value: ":", column: 4 },
+        ],
+        [
+          { type: "keyword", value: "print", column: 2 },
+          {
+            type: "string",
+            value: '"No es ni 10 ni menor o igual a 20"',
+            column: 8,
+          },
+        ],
+      ];
+      const result = AnalizadorSintactico(tokens);
+      const expected: BodyStatement = [
+        {
+          type: "if_statement",
+          condition: {
+            type: "comparison_expression",
+            operator: "==",
+            left: {
+              type: "identifier",
+              value: "x",
+              column: 2,
+            },
+            right: {
+              type: "number",
+              value: "10",
+              column: 7,
+            },
+          },
+          body: [
+            {
+              type: "print_statement",
+              argument: {
+                type: "string",
+                value: '"Es 10"',
+                column: 8,
+              },
+            },
+          ],
+          elseIf: {
+            type: "if_statement",
+            condition: {
+              type: "comparison_expression",
+              operator: "<=",
+              left: {
+                type: "identifier",
+                value: "y",
+                column: 7,
+              },
+              right: {
+                type: "number",
+                value: "20",
+                column: 12,
+              },
+            },
+            body: [
+              {
+                type: "print_statement",
+                argument: {
+                  type: "string",
+                  value: '"Es menor o igual a 20"',
+                  column: 8,
+                },
+              },
+            ],
+          },
+          elseBody: [
+            {
+              type: "print_statement",
+              argument: {
+                type: "string",
+                value: '"No es ni 10 ni menor o igual a 20"',
+                column: 8,
+              },
+            },
+          ],
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+
     it("Deberia parsear una sentencia con un operador logico", () => {
       const tokens: Token[][] = [
         [
@@ -1672,6 +1780,97 @@ describe("AnalizadorSintactico", () => {
                 value: '"Iteracion"',
                 column: 8,
               },
+            },
+          ],
+        },
+      ];
+      expect(result).toEqual(expected);
+    });
+
+    it("Deberia tomar cualquier cosa dentro del cuerpo del for", () => {
+      const tokens: Token[][] = [
+        [
+          { type: "keyword", value: "for", column: 0 },
+          { type: "identifier", value: "i", column: 4 },
+          { type: "operator", value: "=", column: 6 },
+          { type: "number", value: "1", column: 8 },
+          { type: "keyword", value: "to", column: 10 },
+          { type: "number", value: "10", column: 13 },
+          { type: "punctuation", value: ":", column: 16 },
+        ],
+        [
+          { type: "keyword", value: "print", column: 2 },
+          { type: "string", value: '"Iteracion"', column: 8 },
+        ],
+        [
+          { type: "keyword", value: "if", column: 2 },
+          { type: "identifier", value: "i", column: 5 },
+          { type: "operator", value: "<=", column: 7 },
+          { type: "number", value: "5", column: 10 },
+          { type: "punctuation", value: ":", column: 12 },
+        ],
+        [
+          { type: "keyword", value: "print", column: 2 },
+          { type: "string", value: '"Menor o igual a 5"', column: 8 },
+        ],
+      ];
+      const result = AnalizadorSintactico(tokens);
+      const expected = [
+        {
+          type: "for_statement",
+          iterator: {
+            type: "new_variable_declaration",
+            variable: {
+              column: 4,
+              type: "identifier",
+              value: "i",
+            },
+          },
+          init: {
+            type: "number",
+            value: "1",
+            column: 8,
+          },
+          end: {
+            type: "number",
+            value: "10",
+            column: 13,
+          },
+          body: [
+            {
+              type: "print_statement",
+              argument: {
+                type: "string",
+                value: '"Iteracion"',
+                column: 8,
+              },
+            },
+            {
+              type: "if_statement",
+              condition: {
+                type: "comparison_expression",
+                operator: "<=",
+                left: {
+                  type: "identifier",
+                  value: "i",
+                  column: 5,
+                },
+                right: {
+                  type: "number",
+                  value: "5",
+                  column: 10,
+                },
+              },
+              body: [
+                {
+                  type: "print_statement",
+                  argument: {
+                    type: "string",
+                    value: '"Menor o igual a 5"',
+                    column: 8,
+                  },
+                },
+              ],
             },
           ],
         },
